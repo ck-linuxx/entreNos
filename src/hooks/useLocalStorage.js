@@ -183,26 +183,3 @@ export function useAppData() {
     getBalance
   };
 }
-
-// Hook para gerenciar tema escuro
-export function useTheme() {
-  const [isDark, setIsDark] = useLocalStorage('entreNosTheme', false);
-
-  const toggleTheme = () => {
-    setIsDark(!isDark);
-  };
-
-  // Aplicar tema no documento
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDark]);
-
-  return {
-    isDark,
-    toggleTheme
-  };
-}

@@ -46,8 +46,8 @@ export default function Reports() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Relatórios Financeiros</h1>
-          <p className="text-gray-600 dark:text-gray-400">Análise completa das finanças compartilhadas</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Relatórios Financeiros</h1>
+          <p className="text-gray-600">Análise completa das finanças compartilhadas</p>
         </div>
         <button
           onClick={handleResetData}
@@ -100,47 +100,47 @@ export default function Reports() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* Saldo entre os usuários */}
         <div className="card">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Saldo entre Vocês</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">Saldo entre Vocês</h2>
 
           <div className="space-y-4">
-            <div className="flex justify-between items-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div className="flex justify-between items-center p-4 bg-blue-50 rounded-lg">
               <div>
-                <p className="font-medium text-gray-900 dark:text-gray-100">João pagou</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Total das despesas</p>
+                <p className="font-medium text-gray-900">João pagou</p>
+                <p className="text-sm text-gray-600">Total das despesas</p>
               </div>
-              <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
+              <p className="text-xl font-bold text-blue-600">
                 R$ {balance.joao.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
 
-            <div className="flex justify-between items-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+            <div className="flex justify-between items-center p-4 bg-purple-50 rounded-lg">
               <div>
-                <p className="font-medium text-gray-900 dark:text-gray-100">Ana pagou</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Total das despesas</p>
+                <p className="font-medium text-gray-900">Ana pagou</p>
+                <p className="text-sm text-gray-600">Total das despesas</p>
               </div>
-              <p className="text-xl font-bold text-purple-600 dark:text-purple-400">
+              <p className="text-xl font-bold text-purple-600">
                 R$ {balance.ana.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
 
             <div className="border-t pt-4">
               <div className={`text-center p-4 rounded-lg ${balance.balance > 0
-                  ? 'bg-green-50 dark:bg-green-900/20'
-                  : balance.balance < 0
-                    ? 'bg-red-50 dark:bg-red-900/20'
-                    : 'bg-gray-50 dark:bg-gray-700'
+                ? 'bg-green-50'
+                : balance.balance < 0
+                  ? 'bg-red-50'
+                  : 'bg-gray-50'
                 }`}>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Resultado</p>
+                <p className="text-sm text-gray-600 mb-2">Resultado</p>
                 {balance.balance > 0 ? (
-                  <p className="text-lg font-bold text-green-600 dark:text-green-400">
+                  <p className="text-lg font-bold text-green-600">
                     Ana deve R$ {Math.abs(balance.balance).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} para João
                   </p>
                 ) : balance.balance < 0 ? (
-                  <p className="text-lg font-bold text-red-600 dark:text-red-400">
+                  <p className="text-lg font-bold text-red-600">
                     João deve R$ {Math.abs(balance.balance).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} para Ana
                   </p>
                 ) : (
-                  <p className="text-lg font-bold text-gray-600 dark:text-gray-400">
+                  <p className="text-lg font-bold text-gray-600">
                     Vocês estão quites! 🎉
                   </p>
                 )}
@@ -151,27 +151,27 @@ export default function Reports() {
 
         {/* Gastos por categoria */}
         <div className="card">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Gastos por Categoria</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">Gastos por Categoria</h2>
 
           <div className="space-y-4">
             {categories.length > 0 ? (
               categories.map((category, index) => (
                 <div key={category.name} className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-900 dark:text-gray-100">{category.name}</span>
+                    <span className="font-medium text-gray-900">{category.name}</span>
                     <div className="text-right">
-                      <p className="font-bold text-gray-900 dark:text-gray-100">
+                      <p className="font-bold text-gray-900">
                         R$ {category.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{category.percentage.toFixed(1)}%</p>
+                      <p className="text-sm text-gray-600">{category.percentage.toFixed(1)}%</p>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
                       className={`h-2 rounded-full transition-all duration-300 ${index === 0 ? 'bg-blue-500' :
-                          index === 1 ? 'bg-green-500' :
-                            index === 2 ? 'bg-purple-500' :
-                              index === 3 ? 'bg-orange-500' : 'bg-gray-500'
+                        index === 1 ? 'bg-green-500' :
+                          index === 2 ? 'bg-purple-500' :
+                            index === 3 ? 'bg-orange-500' : 'bg-gray-500'
                         }`}
                       style={{ width: `${category.percentage}%` }}
                     ></div>
@@ -179,7 +179,7 @@ export default function Reports() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-8">Nenhuma despesa para categorizar</p>
+              <p className="text-gray-500 text-center py-8">Nenhuma despesa para categorizar</p>
             )}
           </div>
         </div>
@@ -187,45 +187,45 @@ export default function Reports() {
 
       {/* Lista detalhada de despesas */}
       <div className="card">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Histórico Detalhado</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">Histórico Detalhado</h2>
 
         <div className="overflow-x-auto">
           <table className="w-full table-auto">
             <thead>
-              <tr className="bg-gray-50 dark:bg-gray-700">
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Data</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Despesa</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Categoria</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Valor</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Pago por</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Status</th>
+              <tr className="bg-gray-50">
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Data</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Despesa</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Categoria</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Valor</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Pago por</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
+            <tbody className="divide-y divide-gray-200">
               {data.expenses.length > 0 ? (
                 data.expenses
                   .sort((a, b) => new Date(b.date) - new Date(a.date))
                   .map((expense) => (
-                    <tr key={expense.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                      <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+                    <tr key={expense.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm text-gray-900">
                         {new Date(expense.date).toLocaleDateString('pt-BR')}
                       </td>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100">
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
                         {expense.name}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                      <td className="px-4 py-3 text-sm text-gray-600">
                         {categorizeExpense(expense.name)}
                       </td>
-                      <td className="px-4 py-3 text-sm font-bold text-gray-900 dark:text-gray-100">
+                      <td className="px-4 py-3 text-sm font-bold text-gray-900">
                         R$ {expense.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                      <td className="px-4 py-3 text-sm text-gray-600">
                         {expense.paidBy || 'Pendente'}
                       </td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${expense.isPaid
-                            ? 'bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200'
-                            : 'bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-200'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
                           }`}>
                           {expense.isPaid ? 'Pago' : 'Pendente'}
                         </span>
@@ -234,7 +234,7 @@ export default function Reports() {
                   ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                     Nenhuma despesa registrada
                   </td>
                 </tr>
@@ -247,30 +247,30 @@ export default function Reports() {
       {/* Resumo das metas */}
       {data.goals.length > 0 && (
         <div className="card mt-8">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Resumo das Metas</h2>
-          
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">Resumo das Metas</h2>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {data.goals.map((goal) => {
               const progress = (goal.currentAmount / goal.targetAmount) * 100;
               return (
-                <div key={goal.id} className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">{goal.name}</h3>
+                <div key={goal.id} className="p-4 bg-gray-50 rounded-lg">
+                  <h3 className="font-medium text-gray-900 mb-2">{goal.name}</h3>
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">Progresso</span>
-                      <span className="font-medium text-gray-900 dark:text-gray-100">{progress.toFixed(1)}%</span>
+                      <span className="text-gray-600">Progresso</span>
+                      <span className="font-medium">{progress.toFixed(1)}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                    <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
                         className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full"
                         style={{ width: `${Math.min(progress, 100)}%` }}
                       ></div>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">
+                      <span className="text-gray-600">
                         R$ {goal.currentAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
-                      <span className="text-gray-600 dark:text-gray-400">
+                      <span className="text-gray-600">
                         R$ {goal.targetAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
                     </div>

@@ -61,8 +61,8 @@ export default function Expenses() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Despesas Compartilhadas</h1>
-          <p className="text-gray-600 dark:text-gray-400">Gerencie as despesas em comum com {data.user.partnername}</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Despesas Compartilhadas</h1>
+          <p className="text-gray-600">Gerencie as despesas em comum com {data.user.partnername}</p>
         </div>
         <button
           onClick={() => setShowForm(true)}
@@ -114,7 +114,7 @@ export default function Expenses() {
 
       {/* Lista de despesas */}
       <div className="card">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Lista de Despesas</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">Lista de Despesas</h2>
 
         <div className="space-y-4">
           {data.expenses.length > 0 ? (
@@ -122,28 +122,28 @@ export default function Expenses() {
               <div
                 key={expense.id}
                 className={`p-4 rounded-lg border-2 transition-all duration-200 ${expense.isPaid
-                    ? 'border-green-200 dark:border-green-700 bg-green-50 dark:bg-green-900/20'
-                    : 'border-red-200 dark:border-red-700 bg-red-50 dark:bg-red-900/20'
+                  ? 'border-green-200 bg-green-50'
+                  : 'border-red-200 bg-red-50'
                   }`}
               >
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="font-semibold text-gray-900 dark:text-gray-100">{expense.name}</h3>
+                      <h3 className="font-semibold text-gray-900">{expense.name}</h3>
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${expense.isPaid
-                          ? 'bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200'
-                          : 'bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-200'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
                         }`}>
                         {expense.isPaid ? 'Pago' : 'Pendente'}
                       </span>
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                      <p>Valor: <span className="font-medium text-gray-900 dark:text-gray-100">R$ {expense.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></p>
-                      <p>Divisão: <span className="font-medium text-gray-900 dark:text-gray-100">{expense.splitType}</span></p>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <p>Valor: <span className="font-medium">R$ {expense.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></p>
+                      <p>Divisão: <span className="font-medium">{expense.splitType}</span></p>
                       {expense.paidBy && (
-                        <p>Pago por: <span className="font-medium text-gray-900 dark:text-gray-100">{expense.paidBy}</span></p>
+                        <p>Pago por: <span className="font-medium">{expense.paidBy}</span></p>
                       )}
-                      <p>Data: <span className="font-medium text-gray-900 dark:text-gray-100">{new Date(expense.date).toLocaleDateString('pt-BR')}</span></p>
+                      <p>Data: <span className="font-medium">{new Date(expense.date).toLocaleDateString('pt-BR')}</span></p>
                     </div>
                   </div>
 
@@ -151,15 +151,15 @@ export default function Expenses() {
                     <button
                       onClick={() => togglePaidStatus(expense.id)}
                       className={`btn text-sm ${expense.isPaid
-                          ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500'
-                          : 'btn-secondary'
+                        ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        : 'btn-secondary'
                         }`}
                     >
                       {expense.isPaid ? 'Marcar Pendente' : 'Marcar como Pago'}
                     </button>
                     <button
                       onClick={() => deleteExpense(expense.id)}
-                      className="btn bg-red-600 dark:bg-red-700 text-white hover:bg-red-700 dark:hover:bg-red-600 text-sm"
+                      className="btn bg-red-600 text-white hover:bg-red-700 text-sm"
                     >
                       Excluir
                     </button>
@@ -170,8 +170,8 @@ export default function Expenses() {
           ) : (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">💸</div>
-              <p className="text-gray-500 dark:text-gray-400 text-lg">Nenhuma despesa cadastrada ainda</p>
-              <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">Clique em "Nova Despesa" para começar</p>
+              <p className="text-gray-500 text-lg">Nenhuma despesa cadastrada ainda</p>
+              <p className="text-gray-400 text-sm mt-2">Clique em "Nova Despesa" para começar</p>
             </div>
           )}
         </div>
@@ -180,13 +180,13 @@ export default function Expenses() {
       {/* Modal do formulário */}
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Nova Despesa</h3>
+                <h3 className="text-xl font-semibold text-gray-900">Nova Despesa</h3>
                 <button
                   onClick={() => setShowForm(false)}
-                  className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="text-gray-400 hover:text-gray-600"
                 >
                   ✕
                 </button>
@@ -194,7 +194,7 @@ export default function Expenses() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                     Nome da Despesa *
                   </label>
                   <input
@@ -210,7 +210,7 @@ export default function Expenses() {
                 </div>
 
                 <div>
-                  <label htmlFor="amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">
                     Valor Total *
                   </label>
                   <input
@@ -228,7 +228,7 @@ export default function Expenses() {
                 </div>
 
                 <div>
-                  <label htmlFor="paidBy" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="paidBy" className="block text-sm font-medium text-gray-700 mb-1">
                     Quem Pagou
                   </label>
                   <select
@@ -269,9 +269,9 @@ export default function Expenses() {
                     name="isPaid"
                     checked={formData.isPaid}
                     onChange={handleInputChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label htmlFor="isPaid" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                  <label htmlFor="isPaid" className="ml-2 block text-sm text-gray-700">
                     Despesa já foi paga
                   </label>
                 </div>
@@ -280,7 +280,7 @@ export default function Expenses() {
                   <button
                     type="button"
                     onClick={() => setShowForm(false)}
-                    className="flex-1 btn bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500"
+                    className="flex-1 btn bg-gray-200 text-gray-700 hover:bg-gray-300"
                   >
                     Cancelar
                   </button>

@@ -13,10 +13,10 @@ export default function Dashboard() {
     <div className="max-w-7xl mx-auto p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Olá, {data.user.name}! 👋
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-gray-600">
           Aqui está o resumo das suas finanças compartilhadas com {data.user.partnername}
         </p>
       </div>
@@ -71,8 +71,8 @@ export default function Dashboard() {
         {/* Próximas despesas */}
         <div className="card">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Próximas Despesas</h2>
-            <Link to="/expenses" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-sm font-medium">
+            <h2 className="text-xl font-semibold text-gray-900">Próximas Despesas</h2>
+            <Link to="/expenses" className="text-blue-600 hover:text-blue-500 text-sm font-medium">
               Ver todas →
             </Link>
           </div>
@@ -80,26 +80,26 @@ export default function Dashboard() {
           <div className="space-y-4">
             {upcomingExpenses.length > 0 ? (
               upcomingExpenses.slice(0, 3).map((expense) => (
-                <div key={expense.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div key={expense.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
-                      <span className="text-red-600 dark:text-red-400 font-bold">!</span>
+                    <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                      <span className="text-red-600 font-bold">!</span>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-gray-100">{expense.name}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Vence em breve</p>
+                      <p className="font-medium text-gray-900">{expense.name}</p>
+                      <p className="text-sm text-gray-500">Vence em breve</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-gray-900 dark:text-gray-100">
+                    <p className="font-bold text-gray-900">
                       R$ {expense.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Pendente</p>
+                    <p className="text-sm text-gray-500">Pendente</p>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-8">Nenhuma despesa pendente! 🎉</p>
+              <p className="text-gray-500 text-center py-8">Nenhuma despesa pendente! 🎉</p>
             )}
           </div>
         </div>
@@ -107,8 +107,8 @@ export default function Dashboard() {
         {/* Metas conjuntas */}
         <div className="card">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Metas Conjuntas</h2>
-            <Link to="/goals" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-sm font-medium">
+            <h2 className="text-xl font-semibold text-gray-900">Metas Conjuntas</h2>
+            <Link to="/goals" className="text-blue-600 hover:text-blue-500 text-sm font-medium">
               Ver todas →
             </Link>
           </div>
@@ -120,18 +120,18 @@ export default function Dashboard() {
                 return (
                   <div key={goal.id}>
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-medium text-gray-900 dark:text-gray-100">{goal.name}</h3>
-                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                      <h3 className="font-medium text-gray-900">{goal.name}</h3>
+                      <span className="text-sm font-medium text-gray-600">
                         {progress.toFixed(0)}%
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mb-2">
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                       <div
                         className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${Math.min(progress, 100)}%` }}
                       ></div>
                     </div>
-                    <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex justify-between text-sm text-gray-600">
                       <span>R$ {goal.currentAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                       <span>R$ {goal.targetAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                     </div>
@@ -139,7 +139,7 @@ export default function Dashboard() {
                 );
               })
             ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-8">Nenhuma meta cadastrada ainda</p>
+              <p className="text-gray-500 text-center py-8">Nenhuma meta cadastrada ainda</p>
             )}
           </div>
         </div>
@@ -147,38 +147,38 @@ export default function Dashboard() {
 
       {/* Ações rápidas */}
       <div className="mt-8">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Ações Rápidas</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Ações Rápidas</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Link
             to="/expenses"
             className="card hover:shadow-md transition-shadow duration-200 text-center p-4"
           >
             <div className="text-3xl mb-2">💸</div>
-            <p className="font-medium text-gray-900 dark:text-gray-100">Nova Despesa</p>
+            <p className="font-medium text-gray-900">Nova Despesa</p>
           </Link>
-          
+
           <Link
             to="/goals"
             className="card hover:shadow-md transition-shadow duration-200 text-center p-4"
           >
             <div className="text-3xl mb-2">🎯</div>
-            <p className="font-medium text-gray-900 dark:text-gray-100">Nova Meta</p>
+            <p className="font-medium text-gray-900">Nova Meta</p>
           </Link>
-          
+
           <Link
             to="/reports"
             className="card hover:shadow-md transition-shadow duration-200 text-center p-4"
           >
             <div className="text-3xl mb-2">📈</div>
-            <p className="font-medium text-gray-900 dark:text-gray-100">Ver Relatórios</p>
+            <p className="font-medium text-gray-900">Ver Relatórios</p>
           </Link>
-          
+
           <button
             onClick={() => window.location.reload()}
             className="card hover:shadow-md transition-shadow duration-200 text-center p-4"
           >
             <div className="text-3xl mb-2">🔄</div>
-            <p className="font-medium text-gray-900 dark:text-gray-100">Atualizar</p>
+            <p className="font-medium text-gray-900">Atualizar</p>
           </button>
         </div>
       </div>

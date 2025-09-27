@@ -57,8 +57,8 @@ export default function Goals() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Metas Financeiras</h1>
-          <p className="text-gray-600 dark:text-gray-400">Planeje e acompanhe seus objetivos conjuntos</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Metas Financeiras</h1>
+          <p className="text-gray-600">Planeje e acompanhe seus objetivos conjuntos</p>
         </div>
         <button
           onClick={() => setShowForm(true)}
@@ -118,14 +118,14 @@ export default function Goals() {
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-4">
                   <div className="flex-1 mb-4 lg:mb-0">
                     <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{goal.name}</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">{goal.name}</h3>
                       {isCompleted && (
-                        <span className="px-3 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 text-sm font-medium rounded-full">
+                        <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
                           ✅ Concluída!
                         </span>
                       )}
                     </div>
-                    <p className="text-gray-600 dark:text-gray-400">
+                    <p className="text-gray-600">
                       Criada em {new Date(goal.createdAt).toLocaleDateString('pt-BR')}
                     </p>
                   </div>
@@ -151,7 +151,7 @@ export default function Goals() {
                           deleteGoal(goal.id);
                         }
                       }}
-                      className="btn bg-red-600 dark:bg-red-700 text-white hover:bg-red-700 dark:hover:bg-red-600 text-sm"
+                      className="btn bg-red-600 text-white hover:bg-red-700 text-sm"
                     >
                       Excluir
                     </button>
@@ -161,16 +161,16 @@ export default function Goals() {
                 {/* Barra de progresso */}
                 <div className="mb-4">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Progresso</span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <span className="text-sm font-medium text-gray-600">Progresso</span>
+                    <span className="text-sm font-medium text-gray-900">
                       {progress.toFixed(1)}%
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3">
+                  <div className="w-full bg-gray-200 rounded-full h-3">
                     <div
                       className={`h-3 rounded-full transition-all duration-500 ${isCompleted
-                          ? 'bg-gradient-to-r from-green-500 to-green-600'
-                          : 'bg-gradient-to-r from-blue-500 to-purple-500'
+                        ? 'bg-gradient-to-r from-green-500 to-green-600'
+                        : 'bg-gradient-to-r from-blue-500 to-purple-500'
                         }`}
                       style={{ width: `${Math.min(progress, 100)}%` }}
                     ></div>
@@ -179,21 +179,21 @@ export default function Goals() {
 
                 {/* Valores */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Já Guardado</p>
-                    <p className="text-lg font-bold text-green-600 dark:text-green-400">
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-sm text-gray-600 mb-1">Já Guardado</p>
+                    <p className="text-lg font-bold text-green-600">
                       R$ {goal.currentAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </p>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Falta</p>
-                    <p className="text-lg font-bold text-orange-600 dark:text-orange-400">
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-sm text-gray-600 mb-1">Falta</p>
+                    <p className="text-lg font-bold text-orange-600">
                       R$ {Math.max(0, goal.targetAmount - goal.currentAmount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </p>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Meta Total</p>
-                    <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-sm text-gray-600 mb-1">Meta Total</p>
+                    <p className="text-lg font-bold text-blue-600">
                       R$ {goal.targetAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </p>
                   </div>
@@ -204,8 +204,8 @@ export default function Goals() {
         ) : (
           <div className="card text-center py-12">
             <div className="text-6xl mb-4">🎯</div>
-            <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">Nenhuma meta cadastrada ainda</p>
-            <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">Que tal criar sua primeira meta financeira conjunta?</p>
+            <p className="text-gray-500 text-lg mb-2">Nenhuma meta cadastrada ainda</p>
+            <p className="text-gray-400 text-sm mb-6">Que tal criar sua primeira meta financeira conjunta?</p>
             <button
               onClick={() => setShowForm(true)}
               className="btn btn-primary"
@@ -219,13 +219,13 @@ export default function Goals() {
       {/* Modal do formulário */}
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg max-w-md w-full">
+          <div className="bg-white rounded-xl shadow-lg max-w-md w-full">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Nova Meta</h3>
+                <h3 className="text-xl font-semibold text-gray-900">Nova Meta</h3>
                 <button
                   onClick={() => setShowForm(false)}
-                  className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="text-gray-400 hover:text-gray-600"
                 >
                   ✕
                 </button>
@@ -233,7 +233,7 @@ export default function Goals() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                     Nome da Meta *
                   </label>
                   <input
@@ -249,7 +249,7 @@ export default function Goals() {
                 </div>
 
                 <div>
-                  <label htmlFor="targetAmount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="targetAmount" className="block text-sm font-medium text-gray-700 mb-1">
                     Valor da Meta *
                   </label>
                   <input
@@ -267,7 +267,7 @@ export default function Goals() {
                 </div>
 
                 <div>
-                  <label htmlFor="currentAmount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="currentAmount" className="block text-sm font-medium text-gray-700 mb-1">
                     Quanto já guardaram? (opcional)
                   </label>
                   <input
@@ -287,7 +287,7 @@ export default function Goals() {
                   <button
                     type="button"
                     onClick={() => setShowForm(false)}
-                    className="flex-1 btn bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500"
+                    className="flex-1 btn bg-gray-200 text-gray-700 hover:bg-gray-300"
                   >
                     Cancelar
                   </button>
