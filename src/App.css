@@ -1,0 +1,38 @@
+/* App.css - Estilos específicos da aplicação */
+.App {
+  text-align: center;
+}
+
+/* Animações customizadas */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Estilos para barras de progresso personalizadas */
+.progress-bar {
+  transition: width 0.5s ease-in-out;
+}
+
+/* Hover states para cards */
+.card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Responsividade customizada */
+@media (max-width: 640px) {
+  .card {
+    padding: 1rem;
+  }
+}
