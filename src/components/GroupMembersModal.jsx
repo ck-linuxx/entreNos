@@ -1,4 +1,4 @@
-import { FiX, FiArrowLeft, FiUsers } from 'react-icons/fi';
+import { FiX, FiArrowLeft, FiUsers, FiInfo } from 'react-icons/fi';
 import Modal from './Modal';
 import GroupMembers from './GroupMembers';
 import { useGroup } from '../contexts/GroupContext';
@@ -45,8 +45,9 @@ export default function GroupMembersModal({ isOpen, onClose, onBack }) {
         </div>
 
         <div className="mt-6 p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <h4 className="text-xs sm:text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
-            ℹ️ Informações do Grupo
+          <h4 className="text-xs sm:text-sm font-medium text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-1">
+            <FiInfo size={14} />
+            Informações do Grupo
           </h4>
           <ul className="text-xs sm:text-sm text-blue-700 dark:text-blue-300 space-y-1">
             <li>• Todos os membros podem adicionar e editar transações</li>

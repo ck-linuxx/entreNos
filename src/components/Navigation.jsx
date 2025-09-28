@@ -8,6 +8,7 @@ import {
   FiCreditCard,
   FiBarChart,
   FiTarget,
+  FiTrendingUp,
   FiSun,
   FiMoon,
   FiLogOut,
@@ -119,6 +120,7 @@ const GroupAvatars = ({ members, currentUser }) => {
   const { currentGroup, groupMembers } = useGroup();
   const [showDropdown, setShowDropdown] = useState(false);
   const [showGroupModal, setShowGroupModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Debug: log quando o estado do modal muda
   useEffect(() => {
@@ -146,8 +148,28 @@ const GroupAvatars = ({ members, currentUser }) => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    setShowDropdown(false);
+    if (isLoggingOut) return; // Prevenir múltiplos cliques
+    
+    try {
+      setIsLoggingOut(true);
+      console.log('Tentando fazer logout...')
+      
+      const result = await signOut();
+      
+      if (result?.error) {
+        console.error('Erro no logout:', result.error)
+        alert('Erro ao fazer logout. Tente novamente.')
+        setIsLoggingOut(false);
+        return
+      }
+      
+      setShowDropdown(false);
+      // Não resetar isLoggingOut aqui pois a página será redirecionada
+    } catch (err) {
+      console.error('Erro inesperado no logout:', err)
+      alert('Erro inesperado ao fazer logout. Tente novamente.')
+      setIsLoggingOut(false);
+    }
   };
 
   // Fechar dropdown quando clicar fora
@@ -171,7 +193,8 @@ const GroupAvatars = ({ members, currentUser }) => {
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: FiHome },
-    { path: '/expenses', label: 'Transações', icon: FiCreditCard },
+    { path: '/expenses', label: 'Despesas', icon: FiCreditCard },
+    { path: '/income', label: 'Receitas', icon: FiTrendingUp },
     { path: '/goals', label: 'Metas', icon: FiTarget },
     { path: '/reports', label: 'Relatórios', icon: FiBarChart }
   ];
@@ -294,10 +317,15 @@ const GroupAvatars = ({ members, currentUser }) => {
 
                           <button
                             onClick={handleSignOut}
-                            className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                            disabled={isLoggingOut}
+                            className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            <FiLogOut className="mr-2" size={16} />
-                            Sair
+                            {isLoggingOut ? (
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 mr-2"></div>
+                            ) : (
+                              <FiLogOut className="mr-2" size={16} />
+                            )}
+                            {isLoggingOut ? 'Saindo...' : 'Sair'}
                           </button>
                         </div>
                       </div>
@@ -379,10 +407,15 @@ const GroupAvatars = ({ members, currentUser }) => {
 
                         <button
                           onClick={handleSignOut}
-                          className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          disabled={isLoggingOut}
+                          className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <FiLogOut className="mr-2" size={16} />
-                          Sair
+                          {isLoggingOut ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 mr-2"></div>
+                          ) : (
+                            <FiLogOut className="mr-2" size={16} />
+                          )}
+                          {isLoggingOut ? 'Saindo...' : 'Sair'}
                         </button>
                       </div>
                     </div>

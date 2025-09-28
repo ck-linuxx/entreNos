@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTransactions } from '../contexts/TransactionsContext';
 import { useGroup } from '../contexts/GroupContext';
-import { FiPlus, FiTrash2, FiCheck, FiClock, FiDollarSign } from 'react-icons/fi';
+import { FiPlus, FiTrash2, FiCheck, FiClock, FiDollarSign, FiCreditCard, FiTrendingUp } from 'react-icons/fi';
 import Modal from '../components/Modal';
 import CategorySelector from '../components/CategorySelector';
 
@@ -10,6 +10,7 @@ export default function Expenses() {
   const { user } = useAuth();
   const { transactions, loading, addTransaction, updateTransaction, deleteTransaction, fetchTransactions } = useTransactions();
   const { groupMembers, currentGroup } = useGroup();
+  const [filter, setFilter] = useState('all');
 
   // Função para obter o nome do usuário logado
   const getUserName = () => {
@@ -193,25 +194,9 @@ export default function Expenses() {
         return;
       }
 
-      console.log('🔄 Alterando status da transação:', {
-        id: transactionId,
-        name: transaction.name,
-        currentStatus: transaction.is_paid,
-        newStatus: !transaction.is_paid,
-        userLogged: getUserName(),
-        groupId: currentGroup?.id
-      });
-
       // Determinar novos valores
       const newStatus = !transaction.is_paid;
       const newPaidBy = newStatus ? getUserName() : null;
-
-      console.log('📝 Dados da atualização que serão enviados:', {
-        transactionId: transactionId,
-        is_paid: newStatus,
-        paid_by: newPaidBy,
-        currentGroup: currentGroup?.id
-      });
 
       // Atualizar transação
       const result = await updateTransaction(transactionId, {
@@ -220,15 +205,12 @@ export default function Expenses() {
       });
 
       if (result.error) {
-        console.error('❌ Erro na atualização:', result.error);
         alert(`Erro ao alterar status da transação: ${result.error}`);
         return;
       }
 
-      console.log('✅ Transação atualizada com sucesso:', result.data);
-
     } catch (error) {
-      console.error('💥 Erro inesperado ao atualizar status do pagamento:', error);
+      console.error('Erro inesperado ao atualizar status do pagamento:', error);
       alert('Erro inesperado ao atualizar o pagamento. Tente novamente.');
     }
   };
@@ -249,226 +231,320 @@ export default function Expenses() {
     }
   };
 
-  // Debug: verificar transações
-  console.log('🔍 Estado atual das transações:', {
-    total: transactions.length,
-    pagas: transactions.filter(t => t.is_paid).length,
-    pendentes: transactions.filter(t => !t.is_paid).length,
-    usuario: getUserName(),
-    grupo: currentGroup?.id,
-    samples: transactions.slice(0, 3).map(t => ({
-      id: t.id,
-      name: t.name,
-      is_paid: t.is_paid,
-      paid_by: t.paid_by,
-      amount: t.amount
-    }))
+  // Filtrar transações baseado no filtro selecionado
+  const filteredTransactions = transactions.filter(t => {
+    if (filter === 'expenses') return t.type === 'expense' || !t.type;
+    if (filter === 'income') return t.type === 'income';
+    return true; // 'all'
   });
 
   // Calcular estatísticas das transações
-  const totalExpenses = transactions.reduce((acc, t) => acc + t.amount, 0);
-  const paidExpenses = transactions.filter(t => t.is_paid).reduce((acc, t) => acc + t.amount, 0);
+  const expenses = transactions.filter(t => t.type === 'expense' || !t.type); // Incluir transações sem tipo como despesas
+  const income = transactions.filter(t => t.type === 'income');
+  
+  const totalExpenses = expenses.reduce((acc, t) => acc + t.amount, 0);
+  const totalIncome = income.reduce((acc, t) => acc + t.amount, 0);
+  const paidExpenses = expenses.filter(t => t.is_paid).reduce((acc, t) => acc + t.amount, 0);
+  const paidIncome = income.filter(t => t.is_paid).reduce((acc, t) => acc + t.amount, 0);
   const pendingExpenses = totalExpenses - paidExpenses;
+  const pendingIncome = totalIncome - paidIncome;
+  const netBalance = totalIncome - totalExpenses;
 
   return (
     <div className="max-w-7xl mx-auto p-6 main-content">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Despesas Compartilhadas</h1>
-          <p className="text-gray-600 dark:text-gray-400">Gerencie as transações financeiras</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Transações Financeiras</h1>
+          <p className="text-gray-600 dark:text-gray-400">Gerencie despesas e receitas compartilhadas</p>
         </div>
       </div>
 
       {/* Cards de resumo */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="card bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="card bg-gradient-to-br from-red-500 to-red-600 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-100 text-sm font-medium">Total de Despesas</p>
-              <p className="text-2xl font-bold">
+              <p className="text-red-100 text-sm font-medium flex items-center gap-1">
+                <FiCreditCard size={16} />
+                Despesas
+              </p>
+              <p className="text-xl font-bold">
                 R$ {totalExpenses.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
-            <FiDollarSign className="text-3xl opacity-80" />
+            <FiDollarSign className="text-2xl opacity-80" />
           </div>
         </div>
 
         <div className="card bg-gradient-to-br from-green-500 to-green-600 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-green-100 text-sm font-medium">Já Pagas</p>
-              <p className="text-2xl font-bold">
-                R$ {paidExpenses.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              <p className="text-green-100 text-sm font-medium flex items-center gap-1">
+                <FiTrendingUp size={16} />
+                Receitas
+              </p>
+              <p className="text-xl font-bold">
+                R$ {totalIncome.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
-            <FiCheck className="text-3xl opacity-80" />
+            <FiCheck className="text-2xl opacity-80" />
           </div>
         </div>
 
-        <div className="card bg-gradient-to-br from-red-500 to-red-600 text-white">
+        <div className={`card bg-gradient-to-br ${netBalance >= 0 ? 'from-blue-500 to-blue-600' : 'from-orange-500 to-orange-600'} text-white`}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-red-100 text-sm font-medium">Pendentes</p>
-              <p className="text-2xl font-bold">
-                R$ {pendingExpenses.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              <p className={`${netBalance >= 0 ? 'text-blue-100' : 'text-orange-100'} text-sm font-medium flex items-center gap-1`}>
+                <FiDollarSign size={16} />
+                Saldo
+              </p>
+              <p className="text-xl font-bold">
+                R$ {netBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
-            <FiClock className="text-3xl opacity-80" />
+            <FiDollarSign className="text-2xl opacity-80" />
+          </div>
+        </div>
+
+        <div className="card bg-gradient-to-br from-gray-500 to-gray-600 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-100 text-sm font-medium flex items-center gap-1">
+                <FiClock size={16} />
+                Pendentes
+              </p>
+              <p className="text-xl font-bold">
+                R$ {(pendingExpenses + pendingIncome).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              </p>
+            </div>
+            <FiClock className="text-2xl opacity-80" />
           </div>
         </div>
       </div>
 
-      {/* Lista de despesas */}
-      <div className="card">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Lista de Despesas</h2>
 
-        <div className="space-y-4">
-          {loading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="text-gray-600 dark:text-gray-400 mt-2">Carregando transações...</p>
-            </div>
-          ) : transactions.length > 0 ? (
-            transactions.map((transaction) => (
+
+      {/* Lista de transações */}
+      <div className="card">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Lista de Transações</h2>
+          
+          {/* Filtros */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => setFilter('all')}
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
+                filter === 'all'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              }`}
+            >
+              Todas ({transactions.length})
+            </button>
+            <button
+              onClick={() => setFilter('expenses')}
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
+                filter === 'expenses'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              }`}
+            >
+              <FiCreditCard className="inline mr-1" size={14} />
+              Despesas ({expenses.length})
+            </button>
+            <button
+              onClick={() => setFilter('income')}
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
+                filter === 'income'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              }`}
+            >
+              <FiTrendingUp className="inline mr-1" size={14} />
+              Receitas ({income.length})
+            </button>
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">Carregando transações...</p>
+          </div>
+        ) : filteredTransactions.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredTransactions.map((transaction) => (
               <div
                 key={transaction.id}
-                className={`p-5 rounded-xl border-2 transition-all duration-200 hover:shadow-lg ${transaction.is_paid
-                  ? 'border-green-200 dark:border-green-700 bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-900/20 dark:to-green-800/10'
-                  : 'border-orange-200 dark:border-orange-700 bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-900/20 dark:to-orange-800/10'
-                  }`}
+                className={`relative p-4 rounded-xl border-2 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] ${
+                  transaction.type === 'income'
+                    ? transaction.is_paid
+                      ? 'border-green-200 dark:border-green-700 bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-900/20 dark:to-green-800/10'
+                      : 'border-green-300 dark:border-green-600 bg-gradient-to-br from-green-100 to-green-200/50 dark:from-green-800/30 dark:to-green-700/20'
+                    : transaction.is_paid
+                      ? 'border-blue-200 dark:border-blue-700 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/10'
+                      : 'border-orange-200 dark:border-orange-700 bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-900/20 dark:to-orange-800/10'
+                }`}
               >
-                <div className="flex flex-col">
-                  <div className="relative mb-3">
-                    <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 pr-20">{transaction.name}</h3>
-                    <span className={`absolute top-0 right-0 inline-flex items-center px-2 py-1 text-xs font-medium rounded-lg ${transaction.is_paid
-                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
-                      }`}>
-                      {transaction.is_paid ? (
-                        <>
-                          <FiCheck className="mr-1" size={12} />
-                          Pago
-                        </>
-                      ) : (
-                        <>
-                          <FiClock className="mr-1" size={12} />
-                          Pendente
-                        </>
-                      )}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    {/* Informações básicas compactas */}
-                    <div className="flex flex-wrap gap-4 mb-3 text-sm text-gray-600 dark:text-gray-400">
-                      <span><strong className="text-gray-900 dark:text-gray-100">R$ {transaction.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong></span>
-                      <span>•</span>
-                      <span>{transaction.category}</span>
-                      <span>•</span>
-                      <span>{new Date(transaction.date).toLocaleDateString('pt-BR')}</span>
-                      {transaction.paid_by && (
-                        <>
-                          <span>•</span>
-                          <span>Pago por <strong className="text-gray-900 dark:text-gray-100">{transaction.paid_by}</strong></span>
-                        </>
-                      )}
+                {/* Header do Card */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    {transaction.type === 'income' ? (
+                      <FiTrendingUp className="text-2xl text-green-600" />
+                    ) : (
+                      <FiCreditCard className="text-2xl text-red-600" />
+                    )}
+                    <div>
+                      <h3 className="font-bold text-base text-gray-900 dark:text-gray-100 leading-tight">
+                        {transaction.name}
+                      </h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {transaction.category}
+                      </p>
                     </div>
-
-                    {/* Divisão Personalizada */}
-                    {transaction.split_type === 'personalizado' && transaction.individual_amounts && Object.keys(transaction.individual_amounts).length > 0 && (
+                  </div>
+                  <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${transaction.is_paid
+                    ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
+                    : 'bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200'
+                    }`}>
+                    {transaction.is_paid ? (
                       <>
-                        <div className={`text-xs font-medium mb-2 ${transaction.is_paid
-                          ? 'text-green-700 dark:text-green-300'
-                          : 'text-orange-700 dark:text-orange-300'
-                          }`}>Divisão personalizada:</div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                          {Object.entries(transaction.individual_amounts).map(([userId, amount]) => {
-                            const member = getAllMembers().find(m => m.userId === userId);
-                            const percentage = transaction.custom_splits?.[userId] || 0;
-                            return (
-                              <div key={userId} className={`flex items-center justify-between rounded px-2 py-1 ${transaction.is_paid
-                                ? 'bg-green-200/30 dark:bg-green-700/20'
-                                : 'bg-orange-200/30 dark:bg-orange-700/20'
-                                }`}>
-                                <span className="text-xs text-gray-700 dark:text-gray-300 truncate">
-                                  {member?.name || 'Usuário'}
-                                </span>
-                                <div className="text-right ml-2">
-                                  <div className={`text-xs font-semibold ${transaction.is_paid
-                                    ? 'text-green-600 dark:text-green-400'
-                                    : 'text-orange-600 dark:text-orange-400'
-                                    }`}>
-                                    R$ {parseFloat(amount).toFixed(2)}
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <FiCheck className="mr-1" size={10} />
+                        Pago
+                      </>
+                    ) : (
+                      <>
+                        <FiClock className="mr-1" size={10} />
+                        Pendente
                       </>
                     )}
+                  </span>
+                </div>
 
-                    {/* Divisão Igual */}
-                    {(!transaction.split_type || transaction.split_type === 'igual') && getAllMembers().length > 0 && (
-                      <div className="flex items-center justify-between">
-                        <div className={`text-xs ${transaction.is_paid
-                          ? 'text-green-700 dark:text-green-300'
-                          : 'text-orange-700 dark:text-orange-300'
-                          }`}>
-                          Divisão igual entre {getAllMembers().length} {getAllMembers().length === 1 ? 'pessoa' : 'pessoas'}
-                        </div>
-                        <div className={`text-sm font-semibold ${transaction.is_paid
-                          ? 'text-green-600 dark:text-green-400'
-                          : 'text-orange-600 dark:text-orange-400'
-                          }`}>
-                          R$ {(transaction.amount / getAllMembers().length).toFixed(2)} cada
-                        </div>
-                      </div>
-                    )}
-
+                {/* Valor e Data */}
+                <div className="mb-3">
+                  <div className={`text-2xl font-bold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                    {transaction.type === 'income' ? '+' : '-'}R$ {transaction.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </div>
-
-                  {/* Botões alinhados à direita */}
-                  <div className="flex justify-end items-center space-x-2 mt-3">
-                    <button
-                      onClick={() => togglePaidStatus(transaction.id)}
-                      className={`btn text-sm flex items-center ${transaction.is_paid
-                        ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500'
-                        : 'btn-secondary'
-                        }`}
-                    >
-                      {transaction.is_paid ? (
-                        <>
-                          <FiClock className="mr-1" size={16} />
-                          Marcar Pendente
-                        </>
-                      ) : (
-                        <>
-                          <FiCheck className="mr-1" size={16} />
-                          Marcar como Pago
-                        </>
-                      )}
-                    </button>
-                    <button
-                      onClick={() => handleDeleteTransaction(transaction.id)}
-                      className="btn bg-red-600 dark:bg-red-700 text-white hover:bg-red-700 dark:hover:bg-red-600 text-sm flex items-center"
-                    >
-                      <FiTrash2 className="mr-1" size={16} />
-                      Excluir
-                    </button>
+                  <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <span>{new Date(transaction.date).toLocaleDateString('pt-BR')}</span>
+                    {transaction.paid_by && (
+                      <span>Por: <strong>{transaction.paid_by}</strong></span>
+                    )}
                   </div>
                 </div>
+                {/* Divisão */}
+                <div className="mb-4">
+                  {transaction.split_type === 'personalizado' && transaction.individual_amounts && Object.keys(transaction.individual_amounts).length > 0 ? (
+                    <div>
+                      <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+                        Divisão personalizada:
+                      </div>
+                      <div className="space-y-1">
+                        {Object.entries(transaction.individual_amounts).slice(0, 2).map(([userId, amount]) => {
+                          const member = getAllMembers().find(m => m.userId === userId);
+                          return (
+                            <div key={userId} className="flex justify-between text-xs">
+                              <span className="text-gray-600 dark:text-gray-400 truncate">
+                                {member?.name || 'Usuário'}
+                              </span>
+                              <span className="font-medium text-gray-900 dark:text-gray-100">
+                                R$ {parseFloat(amount).toFixed(2)}
+                              </span>
+                            </div>
+                          );
+                        })}
+                        {Object.keys(transaction.individual_amounts).length > 2 && (
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            +{Object.keys(transaction.individual_amounts).length - 2} mais...
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    getAllMembers().length > 0 && (
+                      <div className="text-xs text-gray-600 dark:text-gray-400">
+                        <div className="flex justify-between">
+                          <span>Divisão igual ({getAllMembers().length} pessoas)</span>
+                          <span className="font-medium text-gray-900 dark:text-gray-100">
+                            R$ {(transaction.amount / getAllMembers().length).toFixed(2)} cada
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+
+                {/* Botões de Ação */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => togglePaidStatus(transaction.id)}
+                    className={`flex-1 py-2 px-3 text-xs font-medium rounded-lg transition-colors flex items-center justify-center gap-1 ${
+                      transaction.is_paid
+                        ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500'
+                        : 'bg-green-600 text-white hover:bg-green-700'
+                    }`}
+                  >
+                    {transaction.is_paid ? (
+                      <>
+                        <FiClock size={12} />
+                        Pendente
+                      </>
+                    ) : (
+                      <>
+                        <FiCheck size={12} />
+                        Pagar
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleDeleteTransaction(transaction.id)}
+                    className="py-2 px-3 bg-red-600 text-white hover:bg-red-700 text-xs font-medium rounded-lg transition-colors flex items-center justify-center"
+                  >
+                    <FiTrash2 size={12} />
+                  </button>
+                </div>
               </div>
-            ))
-          ) : (
-            <div className="text-center py-12">
-              <FiDollarSign className="text-6xl mb-4 text-gray-300 dark:text-gray-600" />
-              <p className="text-gray-500 dark:text-gray-400 text-lg">Nenhuma transação cadastrada ainda</p>
-              <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">Clique em "Nova Transação" para começar</p>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4 flex justify-center">
+              {filter === 'expenses' ? (
+                <FiCreditCard className="text-gray-300 dark:text-gray-600" />
+              ) : filter === 'income' ? (
+                <FiTrendingUp className="text-gray-300 dark:text-gray-600" />
+              ) : (
+                <FiDollarSign className="text-gray-300 dark:text-gray-600" />
+              )}
             </div>
-          )}
-        </div>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">
+              {filter === 'all' 
+                ? 'Nenhuma transação cadastrada ainda'
+                : filter === 'expenses'
+                ? 'Nenhuma despesa encontrada'
+                : 'Nenhuma receita encontrada'
+              }
+            </p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
+              {filter === 'all' 
+                ? 'Clique no botão + para adicionar uma nova transação'
+                : `Altere o filtro ou adicione uma nova ${filter === 'expenses' ? 'despesa' : 'receita'}`
+              }
+            </p>
+          </div>
+        )}
       </div>
+
+      {/* Botão flutuante para adicionar transação */}
+      <button
+        onClick={() => setShowForm(true)}
+        className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-all duration-200 hover:scale-110 z-50"
+        title="Nova Transação"
+      >
+        <FiPlus size={24} />
+      </button>
 
       {/* Modal do formulário */}
       <Modal

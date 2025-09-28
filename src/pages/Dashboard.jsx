@@ -3,12 +3,16 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTransactions } from '../contexts/TransactionsContext';
 import { useGroup } from '../contexts/GroupContext';
 import GroupMembers from '../components/GroupMembers';
+import ExpensesByCategoryChart from '../components/ExpensesByCategoryChart';
+import IncomeVsExpensesChart from '../components/IncomeVsExpensesChart';
 import {
   FiDollarSign,
   FiCheckCircle,
   FiAlertCircle,
   FiArrowRight,
-  FiBarChart
+  FiBarChart,
+  FiPieChart,
+  FiTrendingUp
 } from 'react-icons/fi';
 
 export default function Dashboard() {
@@ -131,6 +135,43 @@ export default function Dashboard() {
             </div>
             <div className="text-4xl opacity-80"><FiBarChart className="mx-auto" /></div>
           </div>
+        </div>
+      </div>
+
+      {/* Gráficos */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Gráfico de Despesas por Categoria */}
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <FiPieChart className="text-red-500" />
+              Despesas por Categoria
+            </h2>
+            <Link to="/expenses" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-sm font-medium flex items-center">
+              Ver despesas <FiArrowRight className="ml-1" size={16} />
+            </Link>
+          </div>
+          <ExpensesByCategoryChart />
+        </div>
+
+        {/* Gráfico de Receitas vs Despesas */}
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              <FiTrendingUp className="text-green-500" />
+              Receitas vs Despesas
+            </h2>
+            <div className="flex gap-2">
+              <Link to="/income" className="text-green-600 dark:text-green-400 hover:text-green-500 dark:hover:text-green-300 text-sm font-medium">
+                Receitas
+              </Link>
+              <span className="text-gray-400">•</span>
+              <Link to="/expenses" className="text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300 text-sm font-medium">
+                Despesas
+              </Link>
+            </div>
+          </div>
+          <IncomeVsExpensesChart />
         </div>
       </div>
 

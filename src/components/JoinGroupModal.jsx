@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiUserPlus, FiX, FiArrowRight, FiAlertCircle, FiArrowLeft } from 'react-icons/fi';
+import { FiUserPlus, FiX, FiArrowRight, FiAlertCircle, FiArrowLeft, FiAlertTriangle } from 'react-icons/fi';
 import { useGroup } from '../contexts/GroupContext';
 import Modal from './Modal';
 
@@ -124,8 +124,9 @@ export default function JoinGroupModal({ isOpen, onClose, onBack }) {
           )}
 
           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 sm:p-4">
-            <h3 className="text-xs sm:text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
-              ⚠️ Importante
+            <h3 className="text-xs sm:text-sm font-medium text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-1">
+              <FiAlertTriangle className="text-orange-500" size={14} />
+              Importante
             </h3>
             <ul className="text-xs sm:text-sm text-blue-700 dark:text-blue-300 space-y-1">
               <li>• Ao ingressar em um grupo, você sairá do seu grupo atual</li>
