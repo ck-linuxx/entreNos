@@ -132,7 +132,7 @@ export const GroupProvider = ({ children }) => {
   const fetchGroupMembers = async (groupId) => {
     try {
       console.log('Buscando membros do grupo:', groupId);
-      
+
       // Buscar membros do grupo (sem user_profiles por enquanto)
       const { data: members, error: membersError } = await supabase
         .from('group_members')
@@ -161,16 +161,16 @@ export const GroupProvider = ({ children }) => {
             role: member.role,
             joinedAt: member.joined_at,
             email: user.email,
-            name: user.user_metadata?.full_name || 
-                  user.user_metadata?.name || 
-                  user.email?.split('@')[0] || 
-                  'Você',
-            avatar: user.user_metadata?.avatar_url || 
-                    user.user_metadata?.picture || 
-                    null
+            name: user.user_metadata?.full_name ||
+              user.user_metadata?.name ||
+              user.email?.split('@')[0] ||
+              'Você',
+            avatar: user.user_metadata?.avatar_url ||
+              user.user_metadata?.picture ||
+              null
           };
         }
-        
+
         // Para outros usuários, usar dados básicos por enquanto
         return {
           id: member.id,

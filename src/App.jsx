@@ -2,12 +2,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './contexts/AuthContext';
 import { GroupProvider } from './contexts/GroupContext';
 import { TransactionsProvider } from './contexts/TransactionsContext';
-import { GoalsProvider } from './contexts/GoalsContext';
+import { GoalsProvider } from './contexts/GoalsContext';;
 import Navigation from './components/Navigation';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Expenses from './pages/Expenses';
+import Income from './pages/Income';
 import Goals from './pages/Goals';
 import Reports from './pages/Reports';
 import './App.css';
@@ -35,6 +36,12 @@ function App() {
                     <ProtectedRoute>
                       <Navigation />
                       <Expenses />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/income" element={
+                    <ProtectedRoute>
+                      <Navigation />
+                      <Income />
                     </ProtectedRoute>
                   } />
                   <Route path="/goals" element={

@@ -6,7 +6,7 @@ import { FiX, FiDollarSign } from 'react-icons/fi';
 import Modal from './Modal';
 import CategorySelector from './CategorySelector';
 
-export default function AddTransactionModal({ isOpen, onClose }) {
+export default function AddTransactionModal({ isOpen, onClose, defaultType = 'expense' }) {
   const { user } = useAuth();
   const { addTransaction } = useTransactions();
   const { groupMembers } = useGroup();
@@ -14,6 +14,7 @@ export default function AddTransactionModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
     name: '',
     amount: '',
+    type: defaultType,
     category: 'Alimentação',
     date: new Date().toISOString().split('T')[0],
     paid_by: '',
@@ -52,7 +53,7 @@ export default function AddTransactionModal({ isOpen, onClose }) {
 
     // Verificar se o usuário atual já está na lista
     const userExists = groupMembers.some(member => member.userId === user?.id);
-    
+
     if (userExists) {
       return groupMembers;
     } else {
@@ -60,31 +61,69 @@ export default function AddTransactionModal({ isOpen, onClose }) {
     }
   };
 
+  // Função para formatar valor monetário brasileiro
+  const formatCurrency = (value) => {
+    // Remove tudo que não é dígito
+    const numericValue = value.replace(/\D/g, '');
+
+    // Se não há valor, retorna vazio
+    if (!numericValue) return '';
+
+    // Converte para número e divide por 100 para ter centavos
+    const numberValue = parseFloat(numericValue) / 100;
+
+    // Formata no padrão brasileiro
+    return numberValue.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  };
+
+  // Função para converter valor formatado para número
+  const parseCurrencyToNumber = (formattedValue) => {
+    if (!formattedValue) return 0;
+
+    // Remove pontos de milhares e substitui vírgula por ponto
+    const numericString = formattedValue
+      .replace(/\./g, '') // Remove pontos de milhares
+      .replace(',', '.'); // Substitui vírgula por ponto
+
+    return parseFloat(numericString) || 0;
+  };
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     if (type === 'checkbox') {
       setFormData(prev => ({ ...prev, [name]: checked }));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
-      
-      // Se mudou o valor total e está em modo personalizado, recalcular valores individuais
-      if (name === 'amount' && formData.split_type === 'personalizado') {
+    } else if (name === 'amount') {
+      // Formatação especial para o campo de valor
+      const formattedValue = formatCurrency(value);
+      setFormData(prev => ({ ...prev, [name]: formattedValue }));
+
+      // Se está em modo personalizado, recalcular valores individuais
+      if (formData.split_type === 'personalizado') {
+        const numericValue = parseCurrencyToNumber(formattedValue);
         const newIndividualAmounts = {};
         Object.entries(formData.custom_splits).forEach(([userId, percentage]) => {
-          newIndividualAmounts[userId] = (parseFloat(value) || 0) * (parseFloat(percentage) || 0) / 100;
+          newIndividualAmounts[userId] = numericValue * (parseFloat(percentage) || 0) / 100;
         });
         setFormData(prev => ({ ...prev, individual_amounts: newIndividualAmounts }));
       }
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
   const handleCustomSplitChange = (userId, percentage) => {
     const newSplits = { ...formData.custom_splits, [userId]: parseFloat(percentage) || 0 };
     const newIndividualAmounts = {};
-    
+
+    // Converter o valor formatado para número antes de calcular
+    const numericAmount = parseCurrencyToNumber(formData.amount);
+
     Object.entries(newSplits).forEach(([id, perc]) => {
-      newIndividualAmounts[id] = (parseFloat(formData.amount) || 0) * (parseFloat(perc) || 0) / 100;
+      newIndividualAmounts[id] = numericAmount * (parseFloat(perc) || 0) / 100;
     });
 
     setFormData(prev => ({
@@ -104,7 +143,8 @@ export default function AddTransactionModal({ isOpen, onClose }) {
         return;
       }
 
-      if (!formData.amount || parseFloat(formData.amount) <= 0) {
+      const numericAmount = parseCurrencyToNumber(formData.amount);
+      if (!formData.amount || numericAmount <= 0) {
         alert('Valor deve ser maior que zero');
         return;
       }
@@ -121,7 +161,8 @@ export default function AddTransactionModal({ isOpen, onClose }) {
       // Preparar dados da transação
       const transactionData = {
         name: formData.name.trim(),
-        amount: parseFloat(formData.amount),
+        amount: numericAmount, // Usar o valor numérico convertido
+        type: formData.type,
         category: formData.category,
         date: formData.date,
         paid_by: formData.paid_by || null,
@@ -137,6 +178,7 @@ export default function AddTransactionModal({ isOpen, onClose }) {
       setFormData({
         name: '',
         amount: '',
+        type: defaultType,
         category: 'Alimentação',
         date: new Date().toISOString().split('T')[0],
         paid_by: '',
@@ -145,7 +187,7 @@ export default function AddTransactionModal({ isOpen, onClose }) {
         is_paid: false,
         individual_amounts: {}
       });
-      
+
       onClose();
 
     } catch (error) {
@@ -159,6 +201,7 @@ export default function AddTransactionModal({ isOpen, onClose }) {
     setFormData({
       name: '',
       amount: '',
+      type: defaultType,
       category: 'Alimentação',
       date: new Date().toISOString().split('T')[0],
       paid_by: '',
@@ -183,7 +226,7 @@ export default function AddTransactionModal({ isOpen, onClose }) {
                 Nova Transação
               </h2>
               <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                Adicione uma nova despesa ou receita
+                {formData.type === 'expense' ? 'Adicione uma nova despesa' : 'Adicione uma nova receita'}
               </p>
             </div>
           </div>
@@ -213,21 +256,44 @@ export default function AddTransactionModal({ isOpen, onClose }) {
           </div>
 
           <div>
+            <label htmlFor="type" className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tipo de Transação *
+            </label>
+            <select
+              id="type"
+              name="type"
+              value={formData.type}
+              onChange={handleInputChange}
+              className="w-full p-2 sm:p-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            >
+              <option value="expense">Despesa</option>
+              <option value="income">Receita</option>
+            </select>
+          </div>
+
+          <div>
             <label htmlFor="amount" className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Valor Total *
             </label>
-            <input
-              type="number"
-              id="amount"
-              name="amount"
-              value={formData.amount}
-              onChange={handleInputChange}
-              className="w-full p-2 sm:p-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="0.00"
-              step="0.01"
-              min="0"
-              required
-            />
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 text-sm">
+                R$
+              </span>
+              <input
+                type="text"
+                id="amount"
+                name="amount"
+                value={formData.amount}
+                onChange={handleInputChange}
+                className="w-full pl-10 pr-3 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="0,00"
+                required
+              />
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Digite apenas números. Ex: 1500 = R$ 15,00
+            </p>
           </div>
 
           <div>
@@ -329,7 +395,7 @@ export default function AddTransactionModal({ isOpen, onClose }) {
                         </span>
                         {formData.amount && percentage > 0 && (
                           <div className="text-xs sm:text-sm font-semibold text-green-600 dark:text-green-400">
-                            R$ {amount.toFixed(2)}
+                            R$ {amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </div>
                         )}
                         {percentage > 0 && !formData.amount && (
@@ -360,7 +426,7 @@ export default function AddTransactionModal({ isOpen, onClose }) {
                     </div>
                   );
                 })}
-                
+
                 {/* Resumo das Porcentagens */}
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-2 sm:p-3">
                   <div className="flex justify-between items-center">
@@ -398,7 +464,7 @@ export default function AddTransactionModal({ isOpen, onClose }) {
                             <div key={member.userId} className="flex justify-between text-xs sm:text-sm">
                               <span className="text-green-700 dark:text-green-300 truncate mr-2">{member.name}:</span>
                               <span className="font-semibold text-green-800 dark:text-green-200 flex-shrink-0">
-                                R$ {amount.toFixed(2)} ({percentage}%)
+                                R$ {amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({percentage}%)
                               </span>
                             </div>
                           );
@@ -409,7 +475,7 @@ export default function AddTransactionModal({ isOpen, onClose }) {
                         <div className="flex justify-between text-xs sm:text-sm font-bold">
                           <span className="text-green-700 dark:text-green-300">Total:</span>
                           <span className="text-green-800 dark:text-green-200">
-                            R$ {parseFloat(formData.amount).toFixed(2)}
+                            R$ {parseCurrencyToNumber(formData.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </span>
                         </div>
                       </div>
@@ -428,7 +494,7 @@ export default function AddTransactionModal({ isOpen, onClose }) {
               </label>
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
                 <div className="text-xs sm:text-sm text-blue-700 dark:text-blue-300">
-                  Cada pessoa paga: <strong>R$ {getAllMembers().length > 0 ? (parseFloat(formData.amount) / getAllMembers().length).toFixed(2) : '0.00'}</strong>
+                  Cada pessoa paga: <strong>R$ {getAllMembers().length > 0 ? (parseCurrencyToNumber(formData.amount) / getAllMembers().length).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00'}</strong>
                 </div>
                 <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">
                   Total de {getAllMembers().length} {getAllMembers().length === 1 ? 'pessoa' : 'pessoas'}
