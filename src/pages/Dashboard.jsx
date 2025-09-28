@@ -1,23 +1,75 @@
 import { Link } from 'react-router-dom';
-import { useAppData } from '../hooks/useLocalStorage';
+import { useAuth } from '../contexts/AuthContext';
+import { useTransactions } from '../contexts/TransactionsContext';
+import {
+  FiDollarSign,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiArrowRight,
+  FiBarChart
+} from 'react-icons/fi';
 
 export default function Dashboard() {
-  const { data, getSharedBalance, getUpcomingExpenses } = useAppData();
+  const { transactions, loading } = useTransactions();
+  const { user } = useAuth();
+
+  // Função para obter o nome do usuário logado
+  const getUserName = () => {
+    if (!user) return 'Usuário';
+    return user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      user.email?.split('@')[0] ||
+      'Usuário';
+  };
+
+  // Função para obter o primeiro nome do usuário
+  const getFirstName = () => {
+    const fullName = getUserName();
+    return fullName.split(' ')[0];
+  };
+
+  // Função para calcular o saldo compartilhado
+  const getSharedBalance = () => {
+    if (!transactions || transactions.length === 0) return 0;
+
+    const totalExpenses = transactions
+      .filter(t => t.is_paid)
+      .reduce((acc, transaction) => acc + transaction.amount, 0);
+
+    const userExpenses = transactions
+      .filter(t => t.is_paid && t.paid_by === getUserName())
+      .reduce((acc, transaction) => acc + transaction.amount, 0);
+
+    const partnerExpenses = totalExpenses - userExpenses;
+
+    return userExpenses - partnerExpenses;
+  };
+
+  // Função para obter próximas despesas (não pagas)
+  const getUpcomingExpenses = () => {
+    if (!transactions) return [];
+    return transactions
+      .filter(t => !t.is_paid)
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .slice(0, 3);
+  };
 
   const sharedBalance = getSharedBalance();
   const upcomingExpenses = getUpcomingExpenses();
-  const totalGoalsValue = data.goals.reduce((acc, goal) => acc + goal.targetAmount, 0);
-  const totalSavedGoals = data.goals.reduce((acc, goal) => acc + goal.currentAmount, 0);
+  const totalTransactions = transactions ? transactions.length : 0;
+  const totalPaidAmount = transactions
+    ? transactions.filter(t => t.is_paid).reduce((acc, t) => acc + t.amount, 0)
+    : 0;
 
   return (
     <div className="max-w-7xl mx-auto p-6">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-          Olá, {data.user.name}! 👋
+          Olá, {getFirstName()}!
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Aqui está o resumo das suas finanças compartilhadas com {data.user.partnername}
+          Aqui está o resumo das suas finanças compartilhadas
         </p>
       </div>
 
@@ -32,115 +84,125 @@ export default function Dashboard() {
                 R$ {sharedBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
-            <div className="text-4xl opacity-80">💰</div>
+            <FiDollarSign className="text-4xl opacity-80" />
           </div>
         </div>
 
-        {/* Total de despesas pagas */}
+        {/* Total de transações pagas */}
         <div className="card bg-gradient-to-br from-green-500 to-green-600 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-green-100 text-sm font-medium">Despesas Pagas</p>
+              <p className="text-green-100 text-sm font-medium">Transações Pagas</p>
               <p className="text-3xl font-bold">
-                R$ {data.expenses
-                  .filter(exp => exp.isPaid)
-                  .reduce((acc, exp) => acc + exp.amount, 0)
-                  .toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                {loading ? '...' : `R$ ${totalPaidAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
               </p>
             </div>
-            <div className="text-4xl opacity-80">✅</div>
+            <FiCheckCircle className="text-4xl opacity-80" />
           </div>
         </div>
 
-        {/* Metas em progresso */}
+        {/* Total de transações */}
         <div className="card bg-gradient-to-br from-purple-500 to-purple-600 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-purple-100 text-sm font-medium">Progresso das Metas</p>
+              <p className="text-purple-100 text-sm font-medium">Total de Transações</p>
               <p className="text-3xl font-bold">
-                {totalGoalsValue > 0 ? Math.round((totalSavedGoals / totalGoalsValue) * 100) : 0}%
+                {loading ? '...' : totalTransactions}
               </p>
             </div>
-            <div className="text-4xl opacity-80">🎯</div>
+            <div className="text-4xl opacity-80"><FiBarChart className="mx-auto" /></div>
           </div>
         </div>
       </div>
 
       {/* Seções principais */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Próximas despesas */}
+        {/* Próximas transações */}
         <div className="card">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Próximas Despesas</h2>
-            <Link to="/expenses" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-sm font-medium">
-              Ver todas →
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Próximas Transações</h2>
+            <Link to="/expenses" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-sm font-medium flex items-center">
+              Ver todas <FiArrowRight className="ml-1" size={16} />
             </Link>
           </div>
 
           <div className="space-y-4">
-            {upcomingExpenses.length > 0 ? (
-              upcomingExpenses.slice(0, 3).map((expense) => (
-                <div key={expense.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            {loading ? (
+              <div className="flex items-center justify-center p-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <span className="ml-3 text-gray-600 dark:text-gray-400">Carregando...</span>
+              </div>
+            ) : upcomingExpenses.length > 0 ? (
+              upcomingExpenses.slice(0, 3).map((transaction) => (
+                <div key={transaction.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
-                      <span className="text-red-600 dark:text-red-400 font-bold">!</span>
+                      <FiAlertCircle className="text-red-600 dark:text-red-400" size={20} />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-gray-100">{expense.name}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Vence em breve</p>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{transaction.name}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Categoria: {transaction.category}</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="font-bold text-gray-900 dark:text-gray-100">
-                      R$ {expense.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      R$ {transaction.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Pendente</p>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-8">Nenhuma despesa pendente! 🎉</p>
+              <p className="text-gray-500 dark:text-gray-400 text-center py-8">Nenhuma transação pendente!</p>
             )}
           </div>
         </div>
 
-        {/* Metas conjuntas */}
+        {/* Resumo por categoria */}
         <div className="card">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Metas Conjuntas</h2>
-            <Link to="/goals" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-sm font-medium">
-              Ver todas →
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Gastos por Categoria</h2>
+            <Link to="/reports" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 text-sm font-medium">
+              Ver relatório →
             </Link>
           </div>
 
-          <div className="space-y-6">
-            {data.goals.length > 0 ? (
-              data.goals.slice(0, 2).map((goal) => {
-                const progress = (goal.currentAmount / goal.targetAmount) * 100;
-                return (
-                  <div key={goal.id}>
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-medium text-gray-900 dark:text-gray-100">{goal.name}</h3>
-                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        {progress.toFixed(0)}%
-                      </span>
+          <div className="space-y-4">
+            {loading ? (
+              <div className="flex items-center justify-center p-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <span className="ml-3 text-gray-600 dark:text-gray-400">Carregando...</span>
+              </div>
+            ) : (() => {
+              const categoryTotals = transactions
+                ?.filter(t => t.is_paid)
+                .reduce((acc, transaction) => {
+                  acc[transaction.category] = (acc[transaction.category] || 0) + transaction.amount;
+                  return acc;
+                }, {}) || {};
+
+              const categories = Object.entries(categoryTotals)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 3);
+
+              return categories.length > 0 ? (
+                categories.map(([category, amount]) => (
+                  <div key={category} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                        <FiBarChart className="text-blue-600 dark:text-blue-400" size={16} />
+                      </div>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">{category}</span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mb-2">
-                      <div
-                        className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${Math.min(progress, 100)}%` }}
-                      ></div>
-                    </div>
-                    <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
-                      <span>R$ {goal.currentAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                      <span>R$ {goal.targetAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                    </div>
+                    <span className="font-bold text-gray-900 dark:text-gray-100">
+                      R$ {amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </span>
                   </div>
-                );
-              })
-            ) : (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-8">Nenhuma meta cadastrada ainda</p>
-            )}
+                ))
+              ) : (
+                <p className="text-gray-500 dark:text-gray-400 text-center py-8">Nenhuma transação paga ainda</p>
+              );
+            })()}
           </div>
         </div>
       </div>
@@ -153,31 +215,31 @@ export default function Dashboard() {
             to="/expenses"
             className="card hover:shadow-md transition-shadow duration-200 text-center p-4"
           >
-            <div className="text-3xl mb-2">💸</div>
+            <div className="text-3xl mb-2"><FiDollarSign className="mx-auto" /></div>
             <p className="font-medium text-gray-900 dark:text-gray-100">Nova Despesa</p>
           </Link>
-          
+
           <Link
             to="/goals"
             className="card hover:shadow-md transition-shadow duration-200 text-center p-4"
           >
-            <div className="text-3xl mb-2">🎯</div>
+            <div className="text-3xl mb-2"><FiCheckCircle className="mx-auto" /></div>
             <p className="font-medium text-gray-900 dark:text-gray-100">Nova Meta</p>
           </Link>
-          
+
           <Link
             to="/reports"
             className="card hover:shadow-md transition-shadow duration-200 text-center p-4"
           >
-            <div className="text-3xl mb-2">📈</div>
+            <div className="text-3xl mb-2"><FiBarChart className="mx-auto" /></div>
             <p className="font-medium text-gray-900 dark:text-gray-100">Ver Relatórios</p>
           </Link>
-          
+
           <button
             onClick={() => window.location.reload()}
             className="card hover:shadow-md transition-shadow duration-200 text-center p-4"
           >
-            <div className="text-3xl mb-2">🔄</div>
+            <div className="text-3xl mb-2"><FiAlertCircle className="mx-auto" /></div>
             <p className="font-medium text-gray-900 dark:text-gray-100">Atualizar</p>
           </button>
         </div>
