@@ -11,7 +11,7 @@ export default function ProtectedRoute({ children }) {
           <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-4 animate-pulse">
             <span className="text-white font-bold text-sm">EN</span>
           </div>
-          <p className="text-gray-600 dark:text-gray-400">Carregando...</p>
+          <p className="text-gray-600 dark:text-gray-400">Verificando autenticação...</p>
         </div>
       </div>
     );

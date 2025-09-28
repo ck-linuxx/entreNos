@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../hooks/useLocalStorage';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
+import ErrorMessage from '../components/ErrorMessage';
 import { FiSun, FiMoon } from 'react-icons/fi';
 
 export default function Login() {
@@ -9,16 +11,30 @@ export default function Login() {
   const { isDark, toggleTheme } = useTheme();
   const { signInWithGoogle, user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Usar useEffect para redirecionar quando o usuário for autenticado
   React.useEffect(() => {
-    console.log('Login useEffect - user:', !!user, 'authLoading:', authLoading);
     if (user && !authLoading) {
-      console.log('Usuário logado detectado, redirecionando para dashboard...');
       setLoading(false); // Parar loading local
       navigate('/dashboard', { replace: true });
     }
   }, [user, authLoading, navigate]);
+
+  // Verificar se há erro na URL ao carregar
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    
+    const errorFromUrl = urlParams.get('error') || hashParams.get('error');
+    const errorDescription = urlParams.get('error_description') || hashParams.get('error_description');
+    
+    if (errorFromUrl && errorDescription) {
+      setError(decodeURIComponent(errorDescription));
+      // Limpar a URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   // Se ainda está carregando a autenticação, mostrar loading
   if (authLoading) {
@@ -35,33 +51,45 @@ export default function Login() {
   }
 
   const handleGoogleLogin = async () => {
-    console.log('Iniciando login com Google...');
     setLoading(true);
 
     try {
-      const { data, error } = await signInWithGoogle();
+      // Verificar se há bloqueio de rede primeiro
+      const { data: testData, error: testError } = await supabase.auth.getSession();
 
-      if (error) {
-        console.error('Erro no login:', error);
-        alert(`Erro ao fazer login: ${error.message || 'Tente novamente.'}`);
+      if (testError) {
+        setError(`Erro de conectividade: ${testError.message}`);
         setLoading(false);
         return;
       }
 
-      console.log('Login iniciado com sucesso:', data);
-      // O redirecionamento será feito pelo useEffect quando user for atualizado
-      // Manter loading por um tempo para dar feedback visual
+      const { data, error } = await signInWithGoogle();
+
+      if (error) {
+        setError(`Erro ao fazer login: ${error.message || 'Tente novamente.'}`);
+        setLoading(false);
+        return;
+      }
+
+      // O loading será removido pelo AuthContext quando o usuário for autenticado
+      // ou por timeout se algo der errado
       setTimeout(() => {
-        if (!user) {
-          setLoading(false); // Se após 3 segundos não tiver usuário, parar loading
+        if (loading) {
+          setLoading(false);
         }
-      }, 3000);
+      }, 10000);
 
     } catch (error) {
-      console.error('Erro inesperado no login:', error);
-      alert('Erro inesperado ao fazer login. Verifique sua conexão e tente novamente.');
+      setError('Erro inesperado ao fazer login. Verifique sua conexão e tente novamente.');
       setLoading(false);
     }
+  };
+
+
+
+  const handleRetry = () => {
+    setError(null);
+    setLoading(false);
   };
 
   return (
@@ -95,6 +123,11 @@ export default function Login() {
                 Faça login para continuar
               </h2>
             </div>
+
+            <ErrorMessage 
+              error={error} 
+              onRetry={handleRetry}
+            />
 
             <button
               onClick={handleGoogleLogin}
