@@ -278,13 +278,6 @@ export default function Expenses() {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Despesas Compartilhadas</h1>
           <p className="text-gray-600 dark:text-gray-400">Gerencie as transações financeiras</p>
         </div>
-        <button
-          onClick={() => setShowForm(true)}
-          className="btn btn-primary mt-4 sm:mt-0 flex items-center"
-        >
-          <FiPlus className="mr-2" size={18} />
-          Nova Transação
-        </button>
       </div>
 
       {/* Cards de resumo */}

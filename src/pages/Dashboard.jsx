@@ -90,12 +90,6 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           Olá, {getFirstName()}!
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          {groupMembers && groupMembers.length > 1 
-            ? `Resumo financeiro do grupo ${currentGroup?.name || 'Entre Nós'} (${groupMembers.length} membros)`
-            : 'Aqui está o resumo das suas finanças'
-          }
-        </p>
       </div>
 
       {/* Cards principais */}
@@ -139,13 +133,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-
-      {/* Membros do Grupo */}
-      {groupMembers && groupMembers.length > 0 && (
-        <div className="card mb-8">
-          <GroupMembers showTitle={true} maxMembers={null} />
-        </div>
-      )}
 
       {/* Estatísticas por membro do grupo */}
       {groupStats.memberStats.length > 0 && (
