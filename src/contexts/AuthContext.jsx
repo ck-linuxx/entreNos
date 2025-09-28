@@ -15,10 +15,10 @@ export function AuthProvider({ children }) {
 
 export function useAuthContext() {
   const context = useContext(AuthContext)
-  
+
   if (context === undefined) {
     throw new Error('useAuthContext deve ser usado dentro de um AuthProvider')
   }
-  
+
   return context
 }

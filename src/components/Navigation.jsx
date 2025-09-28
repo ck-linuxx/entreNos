@@ -9,14 +9,14 @@ export default function Navigation() {
   const { isDark, toggleTheme } = useTheme();
   const { user, signOut, loading } = useAuthContext();
   const [isSigningOut, setIsSigningOut] = useState(false);
-  
+
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = async () => {
     try {
       setIsSigningOut(true);
       const { error } = await signOut();
-      
+
       if (error) {
         console.error('Erro ao fazer logout:', error);
         alert('Erro ao fazer logout. Tente novamente.');
@@ -69,8 +69,8 @@ export default function Navigation() {
                   key={item.path}
                   to={item.path}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive(item.path)
-                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                      : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
                     }`}
                 >
                   <span className="mr-2">{item.icon}</span>
@@ -78,7 +78,7 @@ export default function Navigation() {
                 </Link>
               ))}
             </div>
-            
+
             {/* Controles do usuário */}
             <div className="flex items-center space-x-3">
               {/* Toggle de tema */}
@@ -139,8 +139,8 @@ export default function Navigation() {
                   key={item.path}
                   to={item.path}
                   className={`p-2 rounded-md text-lg transition-colors duration-200 ${isActive(item.path)
-                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                      : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700'
                     }`}
                   title={item.label}
                 >
@@ -148,7 +148,7 @@ export default function Navigation() {
                 </Link>
               ))}
             </div>
-            
+
             <div className="flex items-center space-x-2 pl-2 border-l border-gray-200 dark:border-gray-600">
               {/* Toggle de tema mobile */}
               <button

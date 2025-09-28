@@ -70,6 +70,34 @@ export function useLocalStorage(key, initialValue = null) {
   return [value, setStoredValue];
 }
 
+// Hook para gerenciar tema
+export function useTheme() {
+  const [theme, setTheme] = useLocalStorage('theme', 'light');
+
+  useEffect(() => {
+    // Aplicar classe no documento
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+  };
+
+  const isDark = theme === 'dark';
+
+  return {
+    theme,
+    setTheme,
+    toggleTheme,
+    isDark
+  };
+}
+
 // Hook específico para dados da aplicação
 export function useAppData() {
   const [data, setData] = useLocalStorage('entreNosData', INITIAL_DATA);

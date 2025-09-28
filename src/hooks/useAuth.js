@@ -36,12 +36,12 @@ export function useAuth() {
           redirectTo: `${window.location.origin}/dashboard`
         }
       })
-      
+
       if (error) {
         console.error('Erro no login:', error.message)
         return { error }
       }
-      
+
       return { error: null }
     } catch (error) {
       console.error('Erro no login:', error)
@@ -56,12 +56,12 @@ export function useAuth() {
     try {
       setLoading(true)
       const { error } = await supabase.auth.signOut()
-      
+
       if (error) {
         console.error('Erro no logout:', error.message)
         return { error }
       }
-      
+
       return { error: null }
     } catch (error) {
       console.error('Erro no logout:', error)
