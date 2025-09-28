@@ -8,10 +8,6 @@ const GroupMembers = ({ showTitle = true, maxMembers = null }) => {
   const { user } = useAuth();
   const [showDropdown, setShowDropdown] = useState(null);
 
-  // Debug: log dos membros
-  console.log('GroupMembers - groupMembers:', groupMembers);
-  console.log('GroupMembers - currentGroup:', currentGroup);
-
   if (!groupMembers || groupMembers.length === 0) {
     return null;
   }
@@ -103,10 +99,16 @@ const GroupMembers = ({ showTitle = true, maxMembers = null }) => {
                 </div>
                 <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                   <span>{getRoleLabel(member.role)}</span>
-                  {member.email && member.email !== 'Membro do grupo' && (
+                  {member.email && member.email !== 'Membro do grupo' && member.email !== 'Email não disponível' && (
                     <>
                       <span>•</span>
                       <span className="truncate">{member.email}</span>
+                    </>
+                  )}
+                  {(!member.email || member.email === 'Membro do grupo') && member.userId !== user?.id && (
+                    <>
+                      <span>•</span>
+                      <span className="text-gray-400">Membro do grupo</span>
                     </>
                   )}
                 </div>
