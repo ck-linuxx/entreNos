@@ -193,8 +193,7 @@ const GroupAvatars = ({ members, currentUser }) => {
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: FiHome },
-    { path: '/expenses', label: 'Despesas', icon: FiCreditCard },
-    { path: '/income', label: 'Receitas', icon: FiTrendingUp },
+    { path: '/expenses', label: 'Transações', icon: FiCreditCard },
     { path: '/goals', label: 'Metas', icon: FiTarget },
     { path: '/reports', label: 'Relatórios', icon: FiBarChart }
   ];

@@ -313,15 +313,6 @@ export default function Income() {
         )}
       </div>
 
-      {/* Botão flutuante para adicionar receita */}
-      <button
-        onClick={() => setShowAddModal(true)}
-        className="fixed bottom-6 right-6 bg-green-600 hover:bg-green-700 text-white p-4 rounded-full shadow-lg transition-all duration-200 hover:scale-110 z-50"
-        title="Nova Receita"
-      >
-        <FiPlus size={24} />
-      </button>
-
       {/* Modal de adicionar transação */}
       {showAddModal && (
         <AddTransactionModal

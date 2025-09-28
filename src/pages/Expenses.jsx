@@ -537,15 +537,6 @@ export default function Expenses() {
         )}
       </div>
 
-      {/* Botão flutuante para adicionar transação */}
-      <button
-        onClick={() => setShowForm(true)}
-        className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-all duration-200 hover:scale-110 z-50"
-        title="Nova Transação"
-      >
-        <FiPlus size={24} />
-      </button>
-
       {/* Modal do formulário */}
       <Modal
         isOpen={showForm}
