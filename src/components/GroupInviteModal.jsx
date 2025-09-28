@@ -106,12 +106,12 @@ export default function GroupInviteModal({ isOpen, onClose, onBack }) {
 
   const handleShare = async () => {
     const codeToUse = currentCode || currentGroup?.invite_code;
-    const shareText = `Entre no meu grupo financeiro EntreNós! Use o código: ${codeToUse}`;
+    const shareText = `Entre no meu grupo financeiro Entre Nós! Use o código: ${codeToUse}`;
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Convite EntreNós',
+          title: 'Convite Entre Nós',
           text: shareText
         });
       } catch (err) {

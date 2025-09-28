@@ -4,6 +4,7 @@ import { useTheme } from '../hooks/useLocalStorage';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import ErrorMessage from '../components/ErrorMessage';
+import Logo from '../components/Logo';
 import { FiSun, FiMoon } from 'react-icons/fi';
 
 export default function Login() {
@@ -41,8 +42,8 @@ export default function Login() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <span className="text-white font-bold text-2xl">EN</span>
+          <div className="mx-auto mb-4">
+            <Logo size="w-16 h-16 sm:w-20 sm:h-20" showBackground={true} animate={true} />
           </div>
           <p className="text-gray-600 dark:text-gray-400">Carregando...</p>
         </div>
@@ -108,10 +109,10 @@ export default function Login() {
 
         {/* Logo e título */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-2xl">EN</span>
+          <div className="flex justify-center mb-4">
+            <Logo size="w-16 h-16 sm:w-20 sm:h-20" showBackground={true} className="transition-all duration-300" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">EntreNós</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Entre Nós</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">Gestão financeira compartilhada</p>
         </div>
 

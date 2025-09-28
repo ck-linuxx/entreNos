@@ -18,6 +18,7 @@ import {
   FiSettings
 } from 'react-icons/fi';
 import GroupActionModal from './GroupActionModal';
+import Logo from './Logo';
 
 // Componente Avatar com fallback inteligente
 const Avatar = ({ user, member, size = 'w-8 h-8', className = '' }) => {
@@ -170,11 +171,9 @@ const GroupAvatars = ({ members, currentUser }) => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/dashboard" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-green-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">EN</span>
-              </div>
-              <span className="font-bold text-xl text-gray-900 dark:text-gray-100">EntreNós</span>
+            <Link to="/dashboard" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+              <Logo size="w-8 h-8" showBackground={true} />
+              <span className="font-bold text-xl text-gray-900 dark:text-gray-100">Entre Nós</span>
             </Link>
           </div>
 
