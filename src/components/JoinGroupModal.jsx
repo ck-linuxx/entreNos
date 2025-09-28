@@ -48,14 +48,14 @@ export default function JoinGroupModal({ isOpen, onClose, onBack }) {
   if (success) {
     return (
       <Modal isOpen={isOpen} onClose={handleClose} size="sm">
-        <div className="p-6 text-center">
-          <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
-            <FiUserPlus className="text-green-600 dark:text-green-400" size={24} />
+        <div className="p-4 sm:p-6 text-center">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FiUserPlus className="text-green-600 dark:text-green-400" size={20} />
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
             Bem-vindo ao grupo!
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             Você agora tem acesso aos dados compartilhados do grupo.
           </p>
         </div>
@@ -65,41 +65,41 @@ export default function JoinGroupModal({ isOpen, onClose, onBack }) {
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="md">
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
+      <div className="p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
             {onBack && (
               <button
                 onClick={onBack}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex-shrink-0"
                 title="Voltar"
               >
-                <FiArrowLeft size={20} />
+                <FiArrowLeft size={18} />
               </button>
             )}
-            <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
-              <FiUserPlus className="text-green-600 dark:text-green-400" size={20} />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center flex-shrink-0">
+              <FiUserPlus className="text-green-600 dark:text-green-400" size={16} />
             </div>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
                 Entrar em Grupo
               </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                 Digite o código de convite para ingressar
               </p>
             </div>
           </div>
           <button
             onClick={handleClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex-shrink-0"
           >
             <FiX size={20} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Código de Convite
             </label>
             <input
@@ -110,7 +110,7 @@ export default function JoinGroupModal({ isOpen, onClose, onBack }) {
                 setError('');
               }}
               placeholder="Ex: ABC123XY"
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-center tracking-wider text-lg"
+              className="w-full p-2 sm:p-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-center tracking-wider text-base sm:text-lg min-h-[44px]"
               maxLength={8}
               disabled={loading}
             />
@@ -123,41 +123,41 @@ export default function JoinGroupModal({ isOpen, onClose, onBack }) {
             </div>
           )}
 
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 sm:p-4">
+            <h3 className="text-xs sm:text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
               ⚠️ Importante
             </h3>
-            <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+            <ul className="text-xs sm:text-sm text-blue-700 dark:text-blue-300 space-y-1">
               <li>• Ao ingressar em um grupo, você sairá do seu grupo atual</li>
               <li>• Você terá acesso a todas as transações e metas do grupo</li>
               <li>• Todos os membros podem adicionar e editar dados</li>
             </ul>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 py-3 px-4 rounded-lg font-medium transition-colors"
+              className="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 py-3 px-4 rounded-lg font-medium transition-colors min-h-[44px]"
               disabled={loading}
             >
-              Cancelar
+              <span className="text-sm sm:text-base">Cancelar</span>
             </button>
 
             <button
               type="submit"
               disabled={loading || !inviteCode.trim()}
-              className="flex-1 bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              className="flex-1 bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 min-h-[44px]"
             >
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Entrando...
+                  <span className="text-sm sm:text-base">Entrando...</span>
                 </>
               ) : (
                 <>
-                  Entrar no Grupo
-                  <FiArrowRight size={16} />
+                  <span className="text-sm sm:text-base">Entrar no Grupo</span>
+                  <FiArrowRight size={14} />
                 </>
               )}
             </button>

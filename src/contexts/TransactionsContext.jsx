@@ -21,29 +21,83 @@ export const TransactionsProvider = ({ children }) => {
 
     setLoading(true);
     try {
+      // Buscar transações com perfis dos usuários
       const { data, error } = await supabase
         .from('transactions')
-        .select('*')
+        .select(`
+          *,
+          user_profiles (
+            display_name,
+            avatar_url,
+            email
+          )
+        `)
         .eq('group_id', currentGroup.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      // Formatar dados das transações (dados básicos apenas)
-      const formattedTransactions = (data || []).map(transaction => ({
-        ...transaction,
-        createdBy: {
-          email: transaction.user_id === user?.id ? user.email : 'Membro do grupo',
-          name: transaction.user_id === user?.id ?
-            (user.user_metadata?.full_name || user.email?.split('@')[0] || 'Você') :
-            'Membro',
-          avatar: transaction.user_id === user?.id ? user.user_metadata?.picture : null
-        }
-      }));
+      // Formatar dados das transações com informações dos perfis
+      const formattedTransactions = (data || []).map(transaction => {
+        const profile = transaction.user_profiles;
+        
+        return {
+          ...transaction,
+          createdBy: {
+            email: profile?.email || 'Email não disponível',
+            name: profile?.display_name || `Usuário ${transaction.user_id.slice(-4)}`,
+            avatar: profile?.avatar_url || null
+          }
+        };
+      });
 
       setTransactions(formattedTransactions);
     } catch (error) {
       console.error('Erro ao buscar transações:', error);
+      
+      // Fallback para o método anterior se a tabela de perfis não existir ainda
+      try {
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('group_id', currentGroup.id)
+          .order('created_at', { ascending: false });
+
+        if (fallbackError) throw fallbackError;
+
+        const formattedTransactions = (fallbackData || []).map(transaction => {
+          // Se for o usuário atual, usar os dados do auth
+          if (transaction.user_id === user?.id) {
+            return {
+              ...transaction,
+              createdBy: {
+                email: user.email,
+                name: user.user_metadata?.full_name || 
+                      user.user_metadata?.name || 
+                      user.email?.split('@')[0] || 
+                      'Você',
+                avatar: user.user_metadata?.avatar_url || 
+                        user.user_metadata?.picture || 
+                        null
+              }
+            };
+          }
+          
+          // Para outros usuários, usar dados básicos
+          return {
+            ...transaction,
+            createdBy: {
+              email: 'Membro do grupo',
+              name: `Membro ${transaction.user_id.slice(-4)}`,
+              avatar: null
+            }
+          };
+        });
+
+        setTransactions(formattedTransactions);
+      } catch (fallbackErr) {
+        console.error('Erro no fallback:', fallbackErr);
+      }
     } finally {
       setLoading(false);
     }

@@ -133,45 +133,45 @@ export default function GroupInviteModal({ isOpen, onClose, onBack }) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="md">
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
+      <div className="p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
             {onBack && (
               <button
                 onClick={onBack}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex-shrink-0"
                 title="Voltar"
               >
-                <FiArrowLeft size={20} />
+                <FiArrowLeft size={18} />
               </button>
             )}
-            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-              <FiUsers className="text-blue-600 dark:text-blue-400" size={20} />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center flex-shrink-0">
+              <FiUsers className="text-blue-600 dark:text-blue-400" size={16} />
             </div>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 truncate">
                 Convidar para o Grupo
               </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">
                 {currentGroup?.name || 'Carregando...'}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex-shrink-0"
           >
             <FiX size={20} />
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Código de Convite
             </label>
             <div className="flex items-center gap-2">
-              <div className="flex-1 p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg font-mono text-lg text-center tracking-wider">
+              <div className="flex-1 p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg font-mono text-base sm:text-lg text-center tracking-wider min-h-[44px] flex items-center justify-center">
                 {(() => {
                   console.log('Estados do modal:', { initializing, loading, groupLoading, hasGeneratedCode, currentCode: !!currentCode });
 
@@ -194,10 +194,10 @@ export default function GroupInviteModal({ isOpen, onClose, onBack }) {
               <button
                 onClick={handleCopyCode}
                 disabled={loading || groupLoading || initializing}
-                className="p-3 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white rounded-lg transition-colors flex items-center gap-2"
+                className="p-2 sm:p-3 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white rounded-lg transition-colors flex items-center gap-2 min-w-[44px] justify-center"
                 title="Copiar código"
               >
-                {copied ? <FiCheck size={18} /> : <FiCopy size={18} />}
+                {copied ? <FiCheck size={16} /> : <FiCopy size={16} />}
               </button>
             </div>
           </div>
@@ -209,11 +209,11 @@ export default function GroupInviteModal({ isOpen, onClose, onBack }) {
             </div>
           )}
 
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 sm:p-4">
+            <h3 className="text-xs sm:text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
               Como funciona?
             </h3>
-            <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+            <ul className="text-xs sm:text-sm text-blue-700 dark:text-blue-300 space-y-1">
               <li>• Compartilhe este código com a pessoa que deseja convidar</li>
               <li>• Ela deve usar o código na opção "Entrar em Grupo"</li>
               <li>• Após o ingresso, ambos terão acesso aos mesmos dados</li>
@@ -222,24 +222,24 @@ export default function GroupInviteModal({ isOpen, onClose, onBack }) {
             </ul>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={handleShare}
               disabled={loading || groupLoading || initializing}
-              className="flex-1 bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              className="flex-1 bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 min-h-[44px]"
             >
-              <FiShare2 size={18} />
-              Compartilhar
+              <FiShare2 size={16} />
+              <span className="text-sm sm:text-base">Compartilhar</span>
             </button>
 
             <button
               onClick={generateNewCode}
               disabled={loading || groupLoading || initializing}
-              className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 min-h-[44px] sm:w-auto"
               title="Gerar novo código"
             >
-              <FiRefreshCw className={loading ? 'animate-spin' : ''} size={18} />
-              {loading ? 'Gerando...' : 'Novo Código'}
+              <FiRefreshCw className={loading ? 'animate-spin' : ''} size={16} />
+              <span className="text-sm sm:text-base">{loading ? 'Gerando...' : 'Novo Código'}</span>
             </button>
           </div>
 

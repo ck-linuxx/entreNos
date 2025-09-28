@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTransactions } from '../contexts/TransactionsContext';
+import { useGroup } from '../contexts/GroupContext';
+import GroupMembers from '../components/GroupMembers';
 import {
   FiDollarSign,
   FiCheckCircle,
@@ -12,6 +14,7 @@ import {
 export default function Dashboard() {
   const { transactions, loading } = useTransactions();
   const { user } = useAuth();
+  const { currentGroup, groupMembers } = useGroup();
 
   // Função para obter o nome do usuário logado
   const getUserName = () => {
@@ -28,21 +31,43 @@ export default function Dashboard() {
     return fullName.split(' ')[0];
   };
 
-  // Função para calcular o saldo compartilhado
-  const getSharedBalance = () => {
-    if (!transactions || transactions.length === 0) return 0;
+  // Função para calcular estatísticas do grupo
+  const getGroupStats = () => {
+    if (!transactions || transactions.length === 0) {
+      return {
+        totalPaid: 0,
+        totalPending: 0,
+        memberStats: []
+      };
+    }
 
-    const totalExpenses = transactions
+    const totalPaid = transactions
       .filter(t => t.is_paid)
       .reduce((acc, transaction) => acc + transaction.amount, 0);
 
-    const userExpenses = transactions
-      .filter(t => t.is_paid && t.paid_by === getUserName())
+    const totalPending = transactions
+      .filter(t => !t.is_paid)
       .reduce((acc, transaction) => acc + transaction.amount, 0);
 
-    const partnerExpenses = totalExpenses - userExpenses;
+    // Estatísticas por membro (quem pagou o quê)
+    const memberStats = {};
+    transactions
+      .filter(t => t.is_paid && t.paid_by)
+      .forEach(t => {
+        if (!memberStats[t.paid_by]) {
+          memberStats[t.paid_by] = 0;
+        }
+        memberStats[t.paid_by] += t.amount;
+      });
 
-    return userExpenses - partnerExpenses;
+    return {
+      totalPaid,
+      totalPending,
+      memberStats: Object.entries(memberStats).map(([name, amount]) => ({
+        name,
+        amount
+      }))
+    };
   };
 
   // Função para obter próximas despesas (não pagas)
@@ -54,50 +79,50 @@ export default function Dashboard() {
       .slice(0, 3);
   };
 
-  const sharedBalance = getSharedBalance();
+  const groupStats = getGroupStats();
   const upcomingExpenses = getUpcomingExpenses();
   const totalTransactions = transactions ? transactions.length : 0;
-  const totalPaidAmount = transactions
-    ? transactions.filter(t => t.is_paid).reduce((acc, t) => acc + t.amount, 0)
-    : 0;
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6 main-content">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           Olá, {getFirstName()}!
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Aqui está o resumo das suas finanças compartilhadas
+          {groupMembers && groupMembers.length > 1 
+            ? `Resumo financeiro do grupo ${currentGroup?.name || 'Entre Nós'} (${groupMembers.length} membros)`
+            : 'Aqui está o resumo das suas finanças'
+          }
         </p>
       </div>
 
       {/* Cards principais */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {/* Saldo compartilhado */}
+        {/* Total pago pelo grupo */}
         <div className="card bg-gradient-to-br from-blue-500 to-blue-600 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-100 text-sm font-medium">Saldo Compartilhado</p>
+              <p className="text-blue-100 text-sm font-medium">Total Pago pelo Grupo</p>
               <p className="text-3xl font-bold">
-                R$ {sharedBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                R$ {groupStats.totalPaid.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
             <FiDollarSign className="text-4xl opacity-80" />
           </div>
         </div>
 
-        {/* Total de transações pagas */}
-        <div className="card bg-gradient-to-br from-green-500 to-green-600 text-white">
+        {/* Total pendente */}
+        <div className="card bg-gradient-to-br from-orange-500 to-orange-600 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-green-100 text-sm font-medium">Transações Pagas</p>
+              <p className="text-orange-100 text-sm font-medium">Transações Pendentes</p>
               <p className="text-3xl font-bold">
-                {loading ? '...' : `R$ ${totalPaidAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                {loading ? '...' : `R$ ${groupStats.totalPending.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
               </p>
             </div>
-            <FiCheckCircle className="text-4xl opacity-80" />
+            <FiAlertCircle className="text-4xl opacity-80" />
           </div>
         </div>
 
@@ -114,6 +139,40 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Membros do Grupo */}
+      {groupMembers && groupMembers.length > 0 && (
+        <div className="card mb-8">
+          <GroupMembers showTitle={true} maxMembers={null} />
+        </div>
+      )}
+
+      {/* Estatísticas por membro do grupo */}
+      {groupStats.memberStats.length > 0 && (
+        <div className="card mb-8">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Pagamentos por Membro</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {groupStats.memberStats.map((member, index) => (
+              <div key={member.name} className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-gray-100">{member.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Total pago</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-green-600 dark:text-green-400">
+                      R$ {member.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {groupStats.totalPaid > 0 ? ((member.amount / groupStats.totalPaid) * 100).toFixed(1) : 0}%
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Seções principais */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -207,43 +266,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Ações rápidas */}
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Ações Rápidas</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Link
-            to="/expenses"
-            className="card hover:shadow-md transition-shadow duration-200 text-center p-4"
-          >
-            <div className="text-3xl mb-2"><FiDollarSign className="mx-auto" /></div>
-            <p className="font-medium text-gray-900 dark:text-gray-100">Nova Despesa</p>
-          </Link>
-
-          <Link
-            to="/goals"
-            className="card hover:shadow-md transition-shadow duration-200 text-center p-4"
-          >
-            <div className="text-3xl mb-2"><FiCheckCircle className="mx-auto" /></div>
-            <p className="font-medium text-gray-900 dark:text-gray-100">Nova Meta</p>
-          </Link>
-
-          <Link
-            to="/reports"
-            className="card hover:shadow-md transition-shadow duration-200 text-center p-4"
-          >
-            <div className="text-3xl mb-2"><FiBarChart className="mx-auto" /></div>
-            <p className="font-medium text-gray-900 dark:text-gray-100">Ver Relatórios</p>
-          </Link>
-
-          <button
-            onClick={() => window.location.reload()}
-            className="card hover:shadow-md transition-shadow duration-200 text-center p-4"
-          >
-            <div className="text-3xl mb-2"><FiAlertCircle className="mx-auto" /></div>
-            <p className="font-medium text-gray-900 dark:text-gray-100">Atualizar</p>
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

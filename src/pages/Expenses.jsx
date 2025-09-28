@@ -271,7 +271,7 @@ export default function Expenses() {
   const pendingExpenses = totalExpenses - paidExpenses;
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6 main-content">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
         <div>

@@ -165,7 +165,7 @@ export default function Goals() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-6 main-content">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-64 mb-4"></div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -188,7 +188,7 @@ export default function Goals() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6 main-content">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
         <div>
@@ -197,7 +197,7 @@ export default function Goals() {
         </div>
         <button
           onClick={() => setShowForm(true)}
-          className="btn btn-primary mt-4 sm:mt-0"
+          className="flex items-center btn btn-primary mt-4 sm:mt-0"
         >
           <FiPlus className="mr-2" size={18} />
           Nova Meta

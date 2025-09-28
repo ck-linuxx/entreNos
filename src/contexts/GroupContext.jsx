@@ -131,6 +131,9 @@ export const GroupProvider = ({ children }) => {
   // Buscar membros do grupo
   const fetchGroupMembers = async (groupId) => {
     try {
+      console.log('Buscando membros do grupo:', groupId);
+      
+      // Buscar membros do grupo (sem user_profiles por enquanto)
       const { data: members, error: membersError } = await supabase
         .from('group_members')
         .select(`
@@ -141,22 +144,46 @@ export const GroupProvider = ({ children }) => {
         `)
         .eq('group_id', groupId);
 
+      console.log('Membros encontrados:', { members, membersError });
+
       if (membersError) {
         console.error('Erro ao buscar membros:', membersError);
         return;
       }
 
-      // Formatar dados dos membros (dados básicos apenas)
-      const formattedMembers = members?.map(member => ({
-        id: member.id,
-        userId: member.user_id,
-        role: member.role,
-        joinedAt: member.joined_at,
-        email: 'Membro do grupo', // Placeholder até implementarmos lookup de usuários
-        name: member.user_id === user?.id ? (user.user_metadata?.full_name || user.email) : 'Membro',
-        avatar: member.user_id === user?.id ? user.user_metadata?.picture : null
-      })) || [];
+      // Formatar dados dos membros
+      const formattedMembers = members?.map(member => {
+        // Se for o usuário atual, usar os dados do auth
+        if (member.user_id === user?.id) {
+          return {
+            id: member.id,
+            userId: member.user_id,
+            role: member.role,
+            joinedAt: member.joined_at,
+            email: user.email,
+            name: user.user_metadata?.full_name || 
+                  user.user_metadata?.name || 
+                  user.email?.split('@')[0] || 
+                  'Você',
+            avatar: user.user_metadata?.avatar_url || 
+                    user.user_metadata?.picture || 
+                    null
+          };
+        }
+        
+        // Para outros usuários, usar dados básicos por enquanto
+        return {
+          id: member.id,
+          userId: member.user_id,
+          role: member.role,
+          joinedAt: member.joined_at,
+          email: 'Membro do grupo',
+          name: `Membro ${member.user_id.slice(-4)}`,
+          avatar: null
+        };
+      }) || [];
 
+      console.log('Membros formatados:', formattedMembers);
       setGroupMembers(formattedMembers);
     } catch (err) {
       console.error('Erro ao buscar membros:', err);
