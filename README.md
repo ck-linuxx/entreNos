@@ -1,16 +1,41 @@
-# React + Vite
+# EntreNós 💑
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Projeto desenvolvido durante o Techstars Startup Weekend Joinville - Fintech - 09/2025.** 🚀
 
-Currently, two official plugins are available:
+## Sobre o Projeto 💡
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**EntreNós** é uma solução inovadora de fintech desenvolvida para casais que buscam harmonia e clareza em sua gestão financeira compartilhada. Nosso objetivo é eliminar o estresse e os conflitos gerados pela falta de transparência nas finanças a dois, transformando a divisão de despesas em uma experiência simples, justa e colaborativa. 💖
 
-## React Compiler
+Com base em pesquisas aprofundadas, identificamos que a falta de clareza sobre 'quem pagou o quê' e 'quem deve a quem' é uma das principais causas de atritos em relacionamentos. O **EntreNós** surge para resolver essa dor, oferecendo uma plataforma intuitiva que promove a transparência e a equidade financeira. ✅
 
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## A Ideia por Trás do EntreNós ✨
 
-## Expanding the ESLint configuration
+Nossa proposta de valor é clara: **reduzir o estresse financeiro em casais através da transparência e da simplicidade na gestão de despesas compartilhadas**. Acreditamos que, ao fornecer uma visão unificada e fácil de entender das finanças, podemos fortalecer relacionamentos e permitir que os casais se concentrem no que realmente importa. 🎯
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Funcionalidades (MVP) 🛠️
+
+As funcionalidades do MVP do **EntreNós** incluem:
+
+*   **Registro Simplificado de Despesas Compartilhadas:** Uma interface intuitiva para que ambos os parceiros possam adicionar rapidamente os gastos do casal, com opções de categorização básica (ex: casa, alimentação, lazer). 💸
+*   **Dashboard de Transparência "Quem Deve o Quê":** Uma tela principal clara que exibe em tempo real o balanço financeiro entre os parceiros, indicando quem pagou mais e quem deve a quem. Inclui um histórico simples das despesas registradas. 📊
+*   **Divisão Flexível de Contas:** Permite configurar regras de divisão de despesas (ex: 50/50, ou um percentual fixo para cada um) e aplicar essa regra automaticamente aos gastos registrados. ⚖️
+*   **Autenticação de Usuários:** Sistema de login e registro para garantir a segurança e a privacidade das informações financeiras de cada casal. 🔒
+
+## Tecnologias Utilizadas 💻
+
+O projeto **EntreNós** é construído com tecnologias modernas e eficientes, garantindo uma experiência de usuário fluida e um desenvolvimento robusto:
+
+*   **Frontend:**
+    *   **React:** Biblioteca JavaScript para construção de interfaces de usuário interativas. ⚛️
+    *   **Vite:** Ferramenta de build rápida para projetos web modernos. ⚡
+    *   **Tailwind CSS:** Framework CSS utilitário para estilização rápida e responsiva. 🎨
+    *   **ESLint:** Ferramenta para garantir a qualidade e consistência do código JavaScript. 🧹
+*   **Backend/Banco de Dados:**
+    *   Para o MVP utilizamos Postgres com Supabase. 💾
+*   **Deploy:**
+    *   **Vercel:** Plataforma para deploy contínuo e hospedagem de aplicações web, conforme indicado pelo arquivo `vercel.json`. ☁️
+
+---
+
+**Desenvolvido com ❤️ para casais que buscam harmonia financeira.**
+
